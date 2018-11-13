@@ -1,0 +1,66 @@
+<html>
+  <head>
+  </head>
+  <body bgcolor='DDDDDD'>
+    <table align="center">
+      <h2 align="center">Screenshots of topic <a href="https://github.com/topics/portfolio-website">#portfolio-websites on github</a></h2>
+      <tr>
+        {% for url,value,self in headline_menu %}
+          <td>
+            {% if self %}
+              <h2>{{ value }}</h2>
+            {% else %}
+              <h3><a href="{{ url }}">{{ value }}</a></h3>
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+    </table>
+    <table align="center">
+      <tr>
+        {% for value,url,do_href in pagenation_bar %}
+          <td>
+            {% if do_href %}
+            <a href="{{ url }}">{{ value }}</a>
+            {% else %}
+              {{ value }}
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+    </table>
+    <table align="center">
+      {% for tr_repos in tabulated_repos %}
+        <tr>
+          {% for filename, tubled_inforows in tr_repos %}
+            <td>
+              <img src="{{ filename }}" alt="{{ filename }}">
+              {% for string,url,do_herf in tubled_inforows %}
+                <li>
+                {% if do_herf %}
+                  <a href="{{ url }}">{{ string }}</a>
+                {% else %}
+                  {{ string }}
+                {% endif %}
+                </li>
+              {% endfor %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+    <table align="center">
+      <tr>
+        {% for value,url,do_href in pagenation_bar %}
+          <td>
+            {% if do_href %}
+            <a href="{{ url }}">{{ value }}</a>
+            {% else %}
+              {{ value }}
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+    </table>
+  </body>
+</html>
