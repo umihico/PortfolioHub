@@ -8,6 +8,8 @@
 ### How to add my portfolio?
 + put topic #portfolio or #portfolio-websites in your repository.
 + put portfolio url in description of your as 'website'.
++ Please wait till next crawling.  
+
 ![how_to_add](/how_to_add.jpg)
 ### Mine is ugly as gif.
 + You can pull request organized gif as you wish but within 500kb.
