@@ -17,8 +17,8 @@ def _updatable_repo_iter(content_tinydb, que):
         db_repo = db_repos[0]
         filename = html_dir + gen_filename(repo['full_name'])
         if not os.path.exists(filename):
-            print('dosent exist!', repo['full_name'])
-            yield yield
+            print('not exists!', repo['full_name'])
+            yield repo
             continue
         if _conv_updated_at_comparable(repo['updated_at']) > _conv_updated_at_comparable(db_repo['updated_at']):
             print('update!', repo['full_name'])
