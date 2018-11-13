@@ -11,11 +11,11 @@
 + Please wait till next crawling.  
 
 ![how_to_add](/how_to_add.jpg)
-### Mine is ugly as gif.
+### Your gif didn't capture nice moments?
 + You can pull request organized gif as you wish but within 500kb.
 
 ### Where is my gif?
-+ try https://umihico.github.io/thumbnailed-portfolio-websites/gifs/YOURNAME-YOURREPOSITORYNAME.gif
++ Please try https://umihico.github.io/thumbnailed-portfolio-websites/gifs/YOURNAME-YOURREPOSITORYNAME.gif
 
 ### Contribution
 + Making my layout any advice and suggestions will be greatly appreciated
