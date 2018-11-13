@@ -2,7 +2,8 @@ from scraping import url_to_gif, gen_chrome
 from api import iter_repo
 from tinydb import Query
 import pprint
-from common import html_dir, load_db
+from common import html_dir, load_db, gen_filename
+import os
 
 
 def _updatable_repo_iter(content_tinydb, que):
@@ -11,13 +12,19 @@ def _updatable_repo_iter(content_tinydb, que):
         if not db_repos:
             print('new!', repo['full_name'])
             yield repo
+            continue
+
+        db_repo = db_repos[0]
+        filename = html_dir + gen_filename(repo['full_name'])
+        if not os.path.exists(filename):
+            print('dosent exist!', repo['full_name'])
+            yield yield
+            continue
+        if _conv_updated_at_comparable(repo['updated_at']) > _conv_updated_at_comparable(db_repo['updated_at']):
+            print('update!', repo['full_name'])
+            yield repo
         else:
-            db_repo = db_repos[0]
-            if _conv_updated_at_comparable(repo['updated_at']) > _conv_updated_at_comparable(db_repo['updated_at']):
-                print('update!', repo['full_name'])
-                yield repo
-            else:
-                print("already done!", repo['full_name'])
+            print("already done!", repo['full_name'])
 
 
 def _conv_updated_at_comparable(raw_updated_at):
@@ -35,8 +42,7 @@ def download_all():
         do_upsert = True
         portfolio_url = repo['homepage']
 
-        filename = html_dir + 'gifs/' + \
-            repo['full_name'].replace('/', '-') + '.gif'
+        filename = html_dir + gen_filename(repo['full_name'])
         try:
             url_to_gif(portfolio_url, filename, chrome)
         except KeyboardInterrupt as e:
