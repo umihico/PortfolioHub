@@ -1,7 +1,8 @@
 from scraping import url_to_gif, gen_chrome
 from api import iter_repo
-from tinydb import TinyDB, Query
+from tinydb import Query
 import pprint
+from common import html_dir, load_db
 
 
 def _updatable_repo_iter(content_tinydb, que):
@@ -28,11 +29,12 @@ def _conv_updated_at_comparable(raw_updated_at):
 
 def download_all():
     que = Query()
-    content_tinydb = TinyDB('content_tinydb.json')
+    content_tinydb = load_db()
     chrome = gen_chrome()
     for repo in _updatable_repo_iter(content_tinydb, que):
         portfolio_url = repo['homepage']
-        filename = '../umihico.github.io/thumbnailed-portfolio-websites/gifs/' + \
+
+        filename = html_dir + 'gifs/' + \
             repo['full_name'].replace('/', '-') + '.gif'
         try:
             url_to_gif(portfolio_url, filename, chrome)
@@ -58,7 +60,7 @@ def _reduce_amount(repo):
 def optional_edit_content_tinydb():
     url = 'derekargueta/Personal-Site'
     que = Query()
-    content_tinydb = TinyDB('content_tinydb.json')
+    content_tinydb = load_db()
     content_tinydb.remove(que.full_name == url)
     for d in content_tinydb.all():
         d['gif_success'] = True

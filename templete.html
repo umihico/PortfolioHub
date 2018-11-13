@@ -1,0 +1,32 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <table>
+      <tr>
+        {% for url,value,self in headline_menu %}
+          <td>
+            {% if self %}
+              <h2>{{ value }}</h2>
+            {% else %}
+              <h3><a href="{{ url }}">{{ value }}</a></h3>
+          </td>
+        {% endfor %}
+      </tr>
+    </table>
+    <table>
+      {% for tr_repos in tabulated_repos %}
+        <tr>
+          {% for filename, tubled_inforows in tr_repos %}
+            <td>
+              <img src="{{ filename }}" alt="{{ filename }}">
+              {% for string,url in tubled_inforows %}
+                <li><a href="{{ url }}">{{ string }}</a></li>
+              {% endfor %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

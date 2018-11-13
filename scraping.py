@@ -7,7 +7,12 @@ import time
 
 def gen_chrome():
     options = ChromeOptions()
-    options.add_argument("--start-maximized")
+    # options.add_argument("--start-maximized")
+    options.add_argument("--disable-infobars")
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--window-size=2160,1440')
     return Chrome(chrome_options=options)
 
 
@@ -49,8 +54,13 @@ def _test(url="http://www.albinotonnina.com/"):
 
 def url_to_gif(url, filename, chrome=None):
     images = _gen_images_for_gif(url, chrome)
-    images[0].save(filename, save_all=True,
-                   append_images=images[1:], duration=600, loop=100, quality=30, optimize=True)
+    try:
+        images[0].save(filename, save_all=True,
+                       append_images=images[1:], duration=600, loop=100, quality=30, optimize=True)
+    except Exception as e:
+        raise
+    else:
+        print('saved', filename)
 
 
 if __name__ == '__main__':
