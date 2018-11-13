@@ -58,15 +58,28 @@ def _reduce_amount(repo):
 
 
 def optional_edit_content_tinydb():
-    url = 'derekargueta/Personal-Site'
+    # url = 'derekargueta/Personal-Site'
+    # content_tinydb.remove(que.full_name == url)
+    from tinydb import TinyDB
+    raw_api_repos = TinyDB('temp.json')
+    all_repo = raw_api_repos.all()
+    # all_repo = []
+    # for repo in iter_repo():
+    #     all_repo.append(repo)
+    #     raw_api_repos.insert(repo)
     que = Query()
     content_tinydb = load_db()
-    content_tinydb.remove(que.full_name == url)
     for d in content_tinydb.all():
-        d['gif_success'] = True
+        # d['gif_success'] = True
+        try:
+            homepage_url = [r for r in all_repo if r['html_url']
+                            == d['html_url']][0]['homepage']
+        except IndexError as e:
+            continue
+        d['homepage'] = homepage_url
         content_tinydb.upsert(d, que.html_url == d['html_url'])
 
 
 if __name__ == '__main__':
-    # optional_edit_content_tinydb()
-    download_all()
+    optional_edit_content_tinydb()
+    # download_all()
