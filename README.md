@@ -14,3 +14,6 @@
 
 ### Where is my gif?
 + try https://umihico.github.io/thumbnailed-portfolio-websites/gifs/YOURNAME-YOURREPOSITORYNAME.gif
+
+### Contribution
++ You can edit my html layout as you want
