@@ -81,5 +81,5 @@ def optional_edit_content_tinydb():
 
 
 if __name__ == '__main__':
-    optional_edit_content_tinydb()
-    # download_all()
+    # optional_edit_content_tinydb()
+    download_all()
