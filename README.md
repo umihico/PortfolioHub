@@ -1,6 +1,7 @@
 # thumbnailed-portfolio-websites
 > Screenshots of topic #portfolio and #portfolio-websites on github
 ## [https://umihico.github.io/thumbnailed-portfolio-websites/](https://umihico.github.io/thumbnailed-portfolio-websites/)
+![sample_view](/sample_view.jpg)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 ### Features
 + Automated bot and scraping portfolios as animated gif
