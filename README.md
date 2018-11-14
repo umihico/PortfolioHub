@@ -1,10 +1,8 @@
 # thumbnailed-portfolio-websites
-> Screenshots of topic #portfolio and #portfolio-websites on github
+> Screenshots of topic [#portfolio-websites](https://github.com/topics/portfolio-website) on github
 ## [https://umihico.github.io/thumbnailed-portfolio-websites/](https://umihico.github.io/thumbnailed-portfolio-websites/)
-![sample_view](/sample_view.jpg)
+![toppage.gif](/toppage.gif)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
-### Features
-+ Automated bot and scraping portfolios as animated gif
 
 ### How to add my portfolio?
 + put topic #portfolio or #portfolio-websites in your repository.
@@ -12,11 +10,12 @@
 + Please wait till next crawling.  
 
 ![how_to_add](/how_to_add.jpg)
-### Your gif didn't capture nice moments?
+### Didn't I capture your page nicely?
 + You can pull request organized gif as you wish but within 500kb.
 
 ### Where is my gif?
 + Please try https://umihico.github.io/thumbnailed-portfolio-websites/gifs/YOURNAME-YOURREPOSITORYNAME.gif
 
 ### Contribution
-+ Making my layout any advice and suggestions will be greatly appreciated
++ About layout or any advice and suggestions will be greatly appreciated.
++ Correcting and telling me how to use language is also greatly appreciated.

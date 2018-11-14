@@ -113,6 +113,7 @@ def iter_page_data():
                     'recently_updated': "updated_at", }
     for filename, headline_menu in iter_headline():
         sortkey = sortkey_dict[filename]
+        all_repo = [r for r in all_repo if r['gif_success']]
         all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
         chunked_repos = chunks(all_repo, 9)
         max_page_num = len(chunked_repos)
