@@ -9,7 +9,7 @@
 + put portfolio url in description of your as 'website'.
 + Please wait till next crawling.  
 
-![how_to_add](/how_to_add.jpg)
+![how_to_add](/how_to_add2.jpg)
 ### Didn't I capture your page nicely?
 + You can pull request organized gif as you wish but within 500kb.
 
