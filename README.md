@@ -1,5 +1,5 @@
 # thumbnailed-portfolio-websites
-> Screenshots of topic [#portfolio-websites](https://github.com/topics/portfolio-website) on github
+> GIF Screenshots of exerybody's [#portfolio-websites](https://github.com/topics/portfolio-website) on github
 ## [https://umihico.github.io/thumbnailed-portfolio-websites/](https://umihico.github.io/thumbnailed-portfolio-websites/)
 ![toppage.gif](/toppage.gif)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
@@ -17,5 +17,5 @@
 + Please try https://umihico.github.io/thumbnailed-portfolio-websites/gifs/YOURNAME-YOURREPOSITORYNAME.gif
 
 ### Contribution
-+ About layout or any advice and suggestions will be greatly appreciated.
-+ Correcting and telling me how to use language is also greatly appreciated.
++ Beautifying layout or any advice and suggestions will be greatly appreciated.
++ Correcting and telling me how to use language will be also greatly appreciated.

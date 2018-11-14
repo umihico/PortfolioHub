@@ -71,25 +71,46 @@ def optional_edit_content_tinydb():
     # url = 'derekargueta/Personal-Site'
     # content_tinydb.remove(que.full_name == url)
     from tinydb import TinyDB
+    que = Query()
     raw_api_repos = TinyDB('temp.json')
+    print(len(raw_api_repos.all()))
+    full_name = 'kudanagwatidzo/kudanagwatidzo.github.io'
+
+    hit_repos = raw_api_repos.search(que.full_name == full_name)
+    # print(hit_repos[0]['full_name'])
+    # print(hit_repos[0]['html_url'])
     all_repo = raw_api_repos.all()
+    for repo in all_repo:
+        if not repo['homepage'] and repo['full_name'].endswith('.github.io'):
+            username, reponame = repo['full_name'].split('/', maxsplit=1)
+            if username == reponame.replace(".github.io", ''):
+                # such as 'umihico/umihic.github.io'
+                homepage = "https://" + reponame
+                print('estimated', homepage)
+                repo['homepage'] = homepage
+                raw_api_repos.upsert(repo, que.html_url == repo['html_url'])
     # all_repo = []
     # for repo in iter_repo():
     #     all_repo.append(repo)
-    #     raw_api_repos.insert(repo)
-    que = Query()
+    #     raw_api_repos.upsert(repo, que.html_url == repo['html_url'])
+    # raise
     content_tinydb = load_db()
     for d in content_tinydb.all():
         # d['gif_success'] = True
         try:
             homepage_url = [r for r in all_repo if r['html_url']
                             == d['html_url']][0]['homepage']
-        except IndexError as e:
-            continue
-        d['homepage'] = homepage_url
-        content_tinydb.upsert(d, que.html_url == d['html_url'])
+
+        except Exception as e:
+            # pprint.pprint(d)
+            print(d['html_url'])
+            # raise
+        else:
+            if 'homepage' not in d or d['homepage'] != homepage_url:
+                d['homepage'] = homepage_url
+                content_tinydb.upsert(d, que.html_url == d['html_url'])
 
 
 if __name__ == '__main__':
-    # optional_edit_content_tinydb()
-    download_all()
+    optional_edit_content_tinydb()
+    # download_all()

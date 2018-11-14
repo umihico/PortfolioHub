@@ -11,6 +11,11 @@ def top():
     return redirect('/most_stars0001.html')
 
 
+@app.route('/route_test')
+def route_test():
+    return 'route_test'
+
+
 @app.route('/<path>/')
 # def test2_dynamic_path(path="index"):
 #     return render_template('./test_dynamic.html', value=path)
@@ -127,6 +132,8 @@ def iter_page_data():
 def to_tubled_inforow(repo):
     """for string,url,do_herf in tubled_inforow"""
     if 'homepage' not in repo:
+        print(repo)
+        raise
         print('no homepage', repo['html_url'])
         repo['homepage'] = ''
     tubled_inforow = []
@@ -159,8 +166,17 @@ def test_build_static_files():
     build_static_files(paths)
 
 
+def test_app():
+    import os
+    print(app.root_path)
+    app.root_path = os.path.join(os.path.dirname(
+        app.root_path), 'umihico.github.io')
+    print(app.root_path)
+    app.run(port=12167)
+
+
 if __name__ == "__main__":
-    # app.run()
+    # test_app()
     # test_build_static_files()
-    render_static_files()
     # test_gen_pagenation_bar()
+    render_static_files()

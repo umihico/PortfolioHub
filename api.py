@@ -3,6 +3,7 @@ import requests
 import pprint
 import time
 import datetime
+import tinydb
 
 
 def _created_range_iter():
@@ -65,6 +66,8 @@ def _test_json_iter():
 
 
 def iter_repo(topic="portfolio-website"):
+    nohomepages_db = tinydb.TinyDB('nohomepages.json')
+    que = tinydb.Query()
     urlset = set()
     for json in _json_iter():
         total_count, repos = json['total_count'], json['items']
@@ -72,14 +75,25 @@ def iter_repo(topic="portfolio-website"):
             if repo['html_url'] in urlset:
                 continue
             urlset.add(repo['html_url'])
+            if not repo['homepage'] and repo['full_name'].endswith('.github.io'):
+                username, reponame = repo['full_name'].split('/', maxsplit=1)
+                if username == reponame.replace(".github.io", ''):
+                    # such as 'umihico/umihic.github.io'
+                    homepage = "https://" + reponame
+                    print('estimated', homepage)
+                    repo['homepage'] = homepage
             if repo['homepage']:
                 yield repo
             else:
                 print("no homepage", repo['html_url'])
+                nohomepages_db.upsert(
+                    {'html_url': repo['html_url']}, que.html_url == repo['html_url'])
 
 
 def _test_iter_repo():
     for repo in iter_repo():
+        pprint.pprint(repo)
+        # raise
         html_url, description, homepage, created_at, score, stargazers_count = repo['html_url'], repo[
             'description'], repo['homepage'], repo['created_at'][:10], repo['score'], repo['stargazers_count']
         print(created_at, html_url, description, homepage, stargazers_count)
