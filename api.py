@@ -70,10 +70,9 @@ def _test_json_iter():
 
 
 def iter_repo(topic="portfolio-website"):
-    nohomepages_db = tinydb.TinyDB('nohomepages.json')
     que = tinydb.Query()
     urlset = set()
-    for json in _json_iter():
+    for json in _json_iter(topic=topic):
         total_count, repos = json['total_count'], json['items']
         for repo in repos:
             if repo['html_url'] in urlset:
@@ -90,8 +89,6 @@ def iter_repo(topic="portfolio-website"):
                 yield repo
             else:
                 print("no homepage", repo['html_url'])
-                nohomepages_db.upsert(
-                    {'html_url': repo['html_url']}, que.html_url == repo['html_url'])
 
 
 def get_repo_info(ownername, reponame):
