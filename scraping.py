@@ -20,8 +20,11 @@ def _gen_images_for_gif(url, chrome=None):
 
     chrome = chrome or gen_chrome()
     try:
-        print("chrome.get", url)
         requests.get(url).raise_for_status()
+    except Exception as e:
+        raise
+    try:
+        print("chrome.get", url)
         chrome.get(url)
     except Exception as e:
         print(url)
