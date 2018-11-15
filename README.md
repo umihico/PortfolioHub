@@ -6,7 +6,7 @@
 
 ### How to add my portfolio?
 + put topic #portfolio or #portfolio-websites in your repository.
-+ put portfolio url in description of your as 'website'.
++ put portfolio url in description of your as 'website', or your repository name is YOURNAME.github.io
 + Please wait till next crawling.  
 
 ![how_to_add](/how_to_add2.jpg)
