@@ -5,7 +5,7 @@
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
 ### How to add my portfolio?
-+ put topic #portfolio or #portfolio-websites in your repository.
++ put topic #portfolio-websites in your repository.
 + put portfolio url in description of your as 'website', or your repository name is YOURNAME.github.io
 + Please wait till next crawling.  
 
