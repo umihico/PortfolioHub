@@ -3,7 +3,7 @@
   </head>
   <body bgcolor='DDDDDD'>
     <table align="center">
-      <h2 align="center">GIF Screenshots of exerybody's <a href="https://github.com/topics/portfolio-website">#portfolio-websites on github</a></h2>
+      <h2 align="center">GIF Screenshots of everybody's <a href="https://github.com/topics/portfolio-website">#portfolio-websites</a> on GitHub</h2>
       <h3 align="center"><a href="https://github.com/umihico/thumbnailed-portfolio-websites/">Star this project!</a></h3>
       <tr>
         {% for url,value,self in headline_menu %}
@@ -16,6 +16,11 @@
           </td>
         {% endfor %}
       </tr>
+      {% for tag,count in tags_info[:tags_num] %}
+        <a href="location-{{ tag }}0001.html">{{ tag }}({{ count }})</a> /
+      {% endfor %}
+      <a href="locations.html">ALL LOCATIONS</a>
+      <br>
     </table>
     <table align="center">
       <tr>
@@ -33,7 +38,7 @@
     <table align="center">
       {% for tr_repos in tabulated_repos %}
         <tr>
-          {% for filename, tubled_inforows in tr_repos %}
+          {% for filename, tubled_inforows, location_tags in tr_repos %}
             <td>
               <img src="{{ filename }}" alt="{{ filename }}">
               {% for string,url,do_herf in tubled_inforows %}
@@ -45,6 +50,13 @@
                 {% endif %}
                 </li>
               {% endfor %}
+              {% if location_tags %}
+                <li>
+                {% for location_tag in location_tags %}
+                  <a href="location-{{ location_tag }}0001.html">{{ location_tag }}</a> /
+                {% endfor %}
+                </li>
+              {% endif %}
             </td>
           {% endfor %}
         </tr>

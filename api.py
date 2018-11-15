@@ -4,6 +4,7 @@ import pprint
 import time
 import datetime
 import tinydb
+from common import load_db,  que, location_db
 
 
 def _created_range_iter():
@@ -26,12 +27,15 @@ def _test_created_range_iter():
 def github_api_get(url):
     headers = {
         'Accept': 'application/vnd.github.mercy-preview+json', }
+    sleep_time = 10
     while True:
         response = requests.get(url, headers=headers)
         json = response.json()
         if 'message' in json and "API rate limit exceeded for " in json['message']:
             print("API rate limit exceeded")
-            time.sleep(20)
+            sleep_time *= 2
+            print("sleeping", sleep_time)
+            time.sleep(sleep_time)
         else:
             return response
 
@@ -90,6 +94,11 @@ def iter_repo(topic="portfolio-website"):
                     {'html_url': repo['html_url']}, que.html_url == repo['html_url'])
 
 
+def get_repo_info(ownername, reponame):
+    url = f'https://api.github.com/repos/{ownername}/{reponame}'
+    pprint.pprint(requests.get(url).json())
+
+
 def _test_iter_repo():
     for repo in iter_repo():
         pprint.pprint(repo)
@@ -99,7 +108,106 @@ def _test_iter_repo():
         print(created_at, html_url, description, homepage, stargazers_count)
 
 
+def api2location(username="umihico"):
+    url = f'https://api.github.com/users/{username}'
+    response = github_api_get(url)
+    return response.json()['location']
+
+
+def test_api2location():
+    print(api2location())
+
+
+def get_users_location():
+    content_tinydb = load_db()
+    for i, repo in enumerate(iter_repo()):
+        username = repo['owner']['login']
+        if not location_db.search(que.username == username):
+            time.sleep(5)
+            location = api2location(username)
+            print(i, location)
+            location_db.upsert({'username': username, 'location': location, 'tags': geotag(location),
+                                'updated_at': int(time.time())}, que.username == username)
+
+
+def tagble_location():
+    for d in location_db.all():
+        # if 'tags' in d:
+        #     continue
+        d['tags'] = geotag(d['location'])
+        print(d['location'], d['tags'])
+        location_db.upsert(d, que.username == d['username'])
+
+
+def get_users_location_boost():
+    rest_data = [
+        ("alecmarcus", None),
+        ("CheapCyborg", "Richmond, VA"),
+        ("BobDempsey", "Florida!")
+    ]
+    for username, location in rest_data:
+        d = {'username': username, 'location': location,
+             'updated_at': int(time.time())}
+        print(username, location)
+        location_db.upsert(d, que.username == username)
+    raise
+    location_db.upsert()
+    from proxys import proxys
+    import umihico
+    import threading
+    import queue
+    content_tinydb = load_db()
+    usernames = [r['full_name'].split('/')[0] for r in content_tinydb.all()
+                 if not location_db.search(que.username == r['full_name'].split('/')[0])]
+    username_queue = queue.Queue()
+    print(len(usernames))
+    print(usernames)
+    raise
+    for username in usernames:
+        username_queue.put(username)
+    lock = threading.Lock()
+
+    def get_location_proxy(proxy, username_queue, location_db, lock):
+        while True:
+            try:
+                username = username_queue.get_nowait()
+            except Exception as e:
+                time.sleep(3)
+                continue
+            url = f'https://api.github.com/users/{username}'
+            try:
+                response = umihico.scraping.requests_.get(url, proxy=proxy)
+                response.raise_for_status()
+            except Exception as e:
+                time.sleep(1000)
+            if "API rate limit exceeded" in response.text:
+                username_queue.put(username)
+                time.sleep(10000)
+            json = response.json()
+            if "login" not in json:
+                username_queue.put(username)
+                time.sleep(1000)
+                continue
+            location = json['location']
+            d = {'username': username, 'location': location,
+                 'updated_at': int(time.time())}
+            print(username, location)
+            with lock:
+                location_db.upsert(d, que.username == username)
+    # proxys = proxys[:10]
+    for proxy in proxys:
+        thread = threading.Thread(target=get_location_proxy, args=(
+            proxy, username_queue, location_db, lock))
+        thread.start()
+
+
 if __name__ == '__main__':
     # _test_created_range_iter()
     # _test_json_iter()
-    _test_iter_repo()
+    # _test_iter_repo()
+    # test_api2location()
+    # get_users_location()
+    # get_users_location_boost()
+    get_users_location()
+    # tagble_location()
+    # get_repo_info("meetcric", "myblog")

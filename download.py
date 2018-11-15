@@ -1,12 +1,11 @@
 from scraping import url_to_gif, gen_chrome
 from api import iter_repo
-from tinydb import Query
 import pprint
-from common import html_dir, load_db, gen_filename
+from common import html_dir, load_db, gen_filename, content_tinydb, que
 import os
 
 
-def _updatable_repo_iter(content_tinydb, que):
+def _updatable_repo_iter(que):
     for repo in iter_repo():
         db_repos = content_tinydb.search(que.html_url == repo['html_url'])
         if not db_repos:
@@ -35,10 +34,8 @@ def _conv_updated_at_comparable(raw_updated_at):
 
 
 def download_all():
-    que = Query()
-    content_tinydb = load_db()
     chrome = gen_chrome()
-    for repo in _updatable_repo_iter(content_tinydb, que):
+    for repo in _updatable_repo_iter(que):
         do_upsert = True
         portfolio_url = repo['homepage']
 
@@ -70,45 +67,14 @@ def _reduce_amount(repo):
 def optional_edit_content_tinydb():
     # url = 'derekargueta/Personal-Site'
     # content_tinydb.remove(que.full_name == url)
-    from tinydb import TinyDB
-    que = Query()
-    raw_api_repos = TinyDB('temp.json')
-    print(len(raw_api_repos.all()))
-    full_name = 'kudanagwatidzo/kudanagwatidzo.github.io'
-
-    hit_repos = raw_api_repos.search(que.full_name == full_name)
+    # hit_repos = raw_api_repos.search(que.full_name == full_name)
     # print(hit_repos[0]['full_name'])
     # print(hit_repos[0]['html_url'])
-    all_repo = raw_api_repos.all()
+    all_repo = content_tinydb.all()
     for repo in all_repo:
-        if not repo['homepage'] and repo['full_name'].endswith('.github.io'):
-            username, reponame = repo['full_name'].split('/', maxsplit=1)
-            if username == reponame.replace(".github.io", ''):
-                # such as 'umihico/umihic.github.io'
-                homepage = "https://" + reponame
-                print('estimated', homepage)
-                repo['homepage'] = homepage
-                raw_api_repos.upsert(repo, que.html_url == repo['html_url'])
-    # all_repo = []
-    # for repo in iter_repo():
-    #     all_repo.append(repo)
-    #     raw_api_repos.upsert(repo, que.html_url == repo['html_url'])
-    # raise
-    content_tinydb = load_db()
-    for d in content_tinydb.all():
-        # d['gif_success'] = True
-        try:
-            homepage_url = [r for r in all_repo if r['html_url']
-                            == d['html_url']][0]['homepage']
-
-        except Exception as e:
-            # pprint.pprint(d)
-            print(d['html_url'])
-            # raise
-        else:
-            if 'homepage' not in d or d['homepage'] != homepage_url:
-                d['homepage'] = homepage_url
-                content_tinydb.upsert(d, que.html_url == d['html_url'])
+        if 'homepage' not in repo:
+            print(repo['html_url'])
+            content_tinydb.remove(que.html_url == repo['html_url'])
 
 
 if __name__ == '__main__':
