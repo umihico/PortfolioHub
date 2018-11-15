@@ -38,6 +38,7 @@ def beautify_word(raw_location):
 convert_dict = {
     'Usa': "United States",
     "United States Of America": "United States",
+    "Uk": "United Kingdom",
     **convert_dict_usa_states,
 }
 add_country_dict = {
