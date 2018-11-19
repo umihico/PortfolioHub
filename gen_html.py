@@ -6,26 +6,18 @@ app = Flask(__name__)
 
 path_data_dict = {}
 
-
-@app.route('/')
-def top():
-    return redirect('/most_stars0001.html')
-
-# @app.route('/all')
-# def top():
-#     return redirect('/most_stars0001.html')
-
-
-@app.route('/route_test')
-def route_test():
-    return 'route_test'
+headline_menus_strings_keys = [('Most stars', "most_stars"),
+                               ('Most forks', "most_forks"), ('Recently updated', "recently_updated"), ]
+deactivated_headline = [(url + '0001.html', key, False)
+                        for key, url in headline_menus_strings_keys]
 
 
 def gen_tags():
-    tags = []
-    for d in location_db.all():
-        tags.extend(d['tags'])
-    counted_tagdict = collections.Counter(tags)
+    chained_location_tags = []
+    for d in db.all():
+        if 'userdict' in d:
+            chained_location_tags.extend(d['userdict']['tags'])
+    counted_tagdict = collections.Counter(chained_location_tags)
     # Counter({'a': 4, 'c': 2, 'b': 1})
     tags_counts = sorted(list(counted_tagdict.items()),
                          key=lambda x: x[1], reverse=True)
@@ -37,6 +29,8 @@ tags_info = gen_tags()
 
 @app.route('/<path>/')
 def index(path):
+    if path == 'database.html':
+        return alluser()
     headline_menu, tabulated_repos, max_page_num, tags_num = path_data_dict[path]
     pagenation_bar = gen_pagenation_bar(path, max_page_num)
     return render_template(
@@ -45,7 +39,59 @@ def index(path):
         tags_num=tags_num,
         headline_menu=headline_menu,
         tabulated_repos=tabulated_repos,
-        pagenation_bar=pagenation_bar)
+        pagenation_bar=pagenation_bar,
+        grid=True,
+        non_grid_rows=None)
+
+
+@app.route('/')
+def top():
+    return redirect('/most_stars0001.html')
+
+
+# @app.route('/database.html/')
+def alluser():
+    non_grid_rows = []
+    non_grid_rows.append([(x, False, x) for x in ['name', 'repo', 'star', 'fork',
+                                                  'portfolio', 'valid url', 'gif success', 'updated_at', 'gif_url', 'locations']])
+    for d in db.all():
+        full_name = d['full_name']
+        repourl = 'https://github.com/' + full_name
+        name = full_name.split('/')[0]
+        star = d['stargazers_count']
+        forks = d['forks']
+        homepage = d['homepage']
+        homepage_exist = d['homepage_exist']
+        gif_success = d.get('gif_success', 'not tried')
+        updated_at = d['updated_at'][:10]
+        locations = ','.join(
+            d.get('userdict', {}).get('tags', []))
+        locations = locations if locations else 'None'
+        gif_url = gen_filename(d['full_name'])
+
+        tr = []
+        for x in [name, repourl, star, forks, homepage,
+                  homepage_exist, gif_success, updated_at, gif_url, locations]:
+            value = 'url' if x == homepage else 'gif' if x == gif_url else 'repository' if x == repourl else x
+            href_bool = bool(value in ['url', 'gif', 'repository'])
+            tr.append((value, href_bool, x))
+        non_grid_rows.append(tr)
+    for tr in non_grid_rows:
+        # print(tr)
+        for value, do_href, url in tr:
+            pass
+    # print(non_grid_rows[0][2][0])
+    non_grid_rows.sort(
+        key=lambda x: 999999 if x[2][0] == 'star' else x[2][0], reverse=True)
+    return render_template(
+        'templete.html',
+        tags_info=tags_info,
+        tags_num=30,
+        headline_menu=deactivated_headline,
+        tabulated_repos=[],
+        pagenation_bar=list(),
+        grid=False,
+        non_grid_rows=non_grid_rows)
 
 
 @raise_with_printed_args
@@ -106,7 +152,7 @@ def test_gen_pagenation_bar():
 @raise_with_printed_args
 def build_static_files(paths):
     freezer = Freezer(app)
-    app.config['FREEZER_RELATIVE_URLS'] = True
+    app.config['FREEZER_RELATIVE_URLS'] = False
     app.config['FREEZER_DESTINATION'] = html_dir
     app.config['FREEZER_DESTINATION_IGNORE'] = ["gifs", ]
 
@@ -132,6 +178,7 @@ def render_static_files():
         path_data_dict[gen_html_filename(filename, page_index)] = (
             headline_menu, tabulated_repos, max_page_num, tags_num)
     paths = list(path_data_dict.keys())
+    paths.append('database.html')
     build_static_files(paths)
 
 
@@ -176,8 +223,8 @@ def iter_page_data():
             yield filename, page_index + 1, headline_menu, tabulated_repos, max_page_num, 30
     sortkey = "stargazers_count"
     all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
-    user_tags_dict = {d['username'].lower(): d['tags']
-                      for d in location_db.all()}
+    user_tags_dict = {d['userdict']['username'].lower(): d['userdict']['tags']
+                      for d in db.all() if 'userdict' in d}
     # print(user_tags_dict.keys())
     tag_users_dict = {}
     for username, tags in user_tags_dict.items():
@@ -225,12 +272,6 @@ def to_tubled_inforow(repo):
     location_tags = repo['userdict']['tags'] if 'userdict' in repo else list()
     td = [gif_filename, tubled_inforow, location_tags]
     return td
-
-
-headline_menus_strings_keys = [('Most stars', "most_stars"),
-                               ('Most forks', "most_forks"), ('Recently updated', "recently_updated"), ]
-deactivated_headline = [(url + '0001.html', key, False)
-                        for key, url in headline_menus_strings_keys]
 
 
 def iter_headline():
