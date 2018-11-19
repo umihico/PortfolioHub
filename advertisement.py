@@ -78,8 +78,8 @@ def ask_to_put_topic():
     full_names = [
         # 'mathesond2/davidmatheson.me',
         # 'kejriwalrahul/kejriwalrahul.github.io',
-        'gummywormz/gummywormz.github.io',
-        'savinamonet/Portfolio-Site-of-Savina-Fierro',
+        # 'gummywormz/gummywormz.github.io',
+        # 'savinamonet/Portfolio-Site-of-Savina-Fierro',
         'mbrav/mbrav.github.io',
         'xR86/xR86.github.io',
         'nawazishali/nawazishali.github.io',
@@ -221,12 +221,18 @@ def ask_to_put_topic():
         'Dostonbek1/Dostonbek1.github.io',
         'LiskB/Personal-Portfolio']
     import tqdm
+    import random
     for full_name in tqdm.tqdm(full_names):
         username, reponame = full_name.split('/', 1)
+        # time.sleep(random.random() * 2 * 300)
+        time.sleep(10)
         print(username, reponame)
-        create_issue("umihico", "thumbnailed-portfolio-websites", "adding topic #portfolio-websites",
-                     "Hello! I'm collecting screenshots of everybody's portfolio here.\nhttps://umihico.github.io/thumbnailed-portfolio-websites/\nIf you don't mind, I'd like you to add topic #portfolio-website. Then I can crawl later. Thank you!")
-        raise
+        try:
+            create_issue(username, reponame, "adding topic #portfolio-websites",
+                         "Hello! I'm collecting screenshots of everybody's portfolio here.\nhttps://umihico.github.io/thumbnailed-portfolio-websites/\nIf you don't mind, I'd like you to add topic #portfolio-website. Then I can crawl your cool portfolio next time. Thank you!")
+        except Exception as e:
+            print(e)
+        # raise
 
 
 if __name__ == '__main__':

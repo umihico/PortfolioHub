@@ -1,6 +1,6 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
-from common import html_dir, load_db, chunks, gen_filename, numberize_int, que, location_db, raise_with_printed_args
+from common import html_dir, db, chunks, gen_filename, numberize_int, que, location_db, raise_with_printed_args, content_tinydb, get_username, save_as_txt, load_from_txt
 import collections
 app = Flask(__name__)
 
@@ -10,6 +10,10 @@ path_data_dict = {}
 @app.route('/')
 def top():
     return redirect('/most_stars0001.html')
+
+# @app.route('/all')
+# def top():
+#     return redirect('/most_stars0001.html')
 
 
 @app.route('/route_test')
@@ -131,6 +135,22 @@ def render_static_files():
     build_static_files(paths)
 
 
+def mention_users_in_issue(usernames):
+    for chunked_usernames in chunks(usernames, 50):
+        text = ' '.join(['@' + n for n in chunked_usernames])
+        print(text)
+        print()
+        print()
+        print()
+
+
+def gen_current_users():
+    all_repo = content_tinydb.all()
+    current_users = [get_username(r['full_name'])
+                     for r in all_repo if r['gif_success']]
+    save_as_txt('current_users.txt', current_users)
+
+
 @raise_with_printed_args
 def iter_page_data():
     """
@@ -139,9 +159,9 @@ def iter_page_data():
         for filename, tubled_inforows in tr_repost:
             for string,url ,do_herfin tubled_inforow:
     """
-    content_tinydb = load_db()
-    all_repo = content_tinydb.all()
-    all_repo = [r for r in all_repo if r['gif_success']]
+    all_repo = db.all()
+    all_repo = [
+        r for r in all_repo if 'homepage_exist' in r and r['homepage_exist'] and r['gif_success']]
     sortkey_dict = {'most_stars': "stargazers_count",
                     'most_forks': "forks",
                     'recently_updated': "updated_at", }
@@ -202,9 +222,7 @@ def to_tubled_inforow(repo):
     tubled_inforow.append(
         ("updated:" + str(repo['updated_at'])[:10], '', False))
     gif_filename = gen_filename(repo['full_name'])
-    location_db_hitdata = location_db.search(que.username == username)
-    location_tags = location_db_hitdata[0]['tags'] if location_db_hitdata else list(
-    )
+    location_tags = repo['userdict']['tags'] if 'userdict' in repo else list()
     td = [gif_filename, tubled_inforow, location_tags]
     return td
 
@@ -238,6 +256,9 @@ def test_app():
 
 
 if __name__ == "__main__":
+    # usernames = load_from_txt('current_users.txt')
+    # mention_users_in_issue(usernames)
+    # gen_current_users()
     # test_app()
     # test_build_static_files()
     # test_gen_pagenation_bar()

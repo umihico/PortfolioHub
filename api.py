@@ -83,12 +83,10 @@ def iter_repo(topic="portfolio-website"):
                 if username == reponame.replace(".github.io", ''):
                     # such as 'umihico/umihic.github.io'
                     homepage = "https://" + reponame
-                    print('estimated', homepage)
+                    # print('estimated', homepage)
                     repo['homepage'] = homepage
-            if repo['homepage']:
-                yield repo
-            else:
-                print("no homepage", repo['html_url'])
+            repo['homepage_exist'] = True if repo['homepage'] else False
+            yield repo
 
 
 def get_repo_info(ownername, reponame):
@@ -113,6 +111,14 @@ def api2location(username="umihico"):
 
 def test_api2location():
     print(api2location())
+
+
+def get_userlocation_rawjson(username="umihico"):
+    url = f'https://api.github.com/users/{username}'
+    headers = {'Accept': 'application/vnd.github.mercy-preview+json', }
+    response = requests.get(url, headers=headers)
+    # response.raise_for_status()
+    return response.json()
 
 
 def get_users_location():
