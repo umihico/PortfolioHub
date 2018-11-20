@@ -2,6 +2,7 @@
   <head>
     <link rel="stylesheet" href="css.css" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
   </head>
   <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -9,23 +10,23 @@
     <h2>GIF Screenshots of everybody's <a href="https://github.com/topics/portfolio-website">#portfolio-websites</a> on GitHub</h2>
     <h3><a href="https://github.com/umihico/thumbnailed-portfolio-websites/">Star this project!</a></h3>
     <table>
-      <tr>
-        {% for url,value,self in headline_menu %}
-          <td>
-            {% if self %}
-              <h2>{{ value }}</h2>
-            {% else %}
-              <h3><a href="{{ url }}">{{ value }}</a></h3>
-            {% endif %}
-          </td>
-        {% endfor %}
-      </tr>
       {% for tag,count in tags_info[:tags_num] %}
         <a href="location-{{ tag }}0001.html">{{ tag }}({{ count }})</a> /
       {% endfor %}
       <a href="locations.html">ALL LOCATIONS</a>/<a href="database.html">didn't find yourself?</a>
       <br>
     </table>
+    <div class="row">
+      {% for url,value,self in headline_menu %}
+        <div class="col-sm-6 col-md-4">
+          {% if self %}
+            <h2>{{ value }}</h2>
+          {% else %}
+            <h3><a href="{{ url }}">{{ value }}</a></h3>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
     <table>
       <tr>
         {% for value,url,do_href in pagenation_bar %}
@@ -40,52 +41,50 @@
       </tr>
 
     </table>
-    <table class="pgif-table">
+    <div class="row">
       {% if grid %}
-        {% for tr_repos in tabulated_repos %}
-          <tr>
-            {% for filename, tubled_inforows, location_tags in tr_repos %}
-              <td>
-                <img src="{{ filename }}" alt="{{ filename }}" class="pgif">
-                {% for string,url,do_herf in tubled_inforows %}
-                  <li>
-                  {% if do_herf %}
-                    <a href="{{ url }}">{{ string }}</a>
-                  {% else %}
-                    {{ string }}
-                  {% endif %}
-                  </li>
-                {% endfor %}
-                {% if location_tags %}
-                  <li>
-                  {% for location_tag in location_tags %}
-                    <a href="location-{{ location_tag }}0001.html">{{ location_tag }}</a> /
-                  {% endfor %}
-                  </li>
+        {% for filename, tubled_inforows, location_tags in repos %}
+          <div class="col-sm-6 col-md-4">
+            <div class="userbox">
+              <a href="{{ filename }}"><img src="{{ filename }}" alt="{{ filename }}"></a>
+              {% for string,url,do_herf in tubled_inforows %}
+                <li>
+                {% if do_herf %}
+                  <a href="{{ url }}">{{ string }}</a>
+                {% else %}
+                  {{ string }}
                 {% endif %}
-              </td>
-            {% endfor %}
-          </tr>
+                </li>
+              {% endfor %}
+              {% if location_tags %}
+                <li>
+                {% for location_tag in location_tags %}
+                  <a href="location-{{ location_tag }}0001.html">{{ location_tag }}</a> /
+                {% endfor %}
+                </li>
+              {% endif %}
+            </div>
+          </div>
         {% endfor %}
       {% else %}
-        <tr>
-          <td colspan="10"> if you didn't find yourself, or error with unknown reason, feel free to create issue.</td>
-        </tr>
-        {% for tr in non_grid_rows %}
-          <tr >
-            {% for value,do_href,url in tr %}
-              <td nowrap>
-                {% if do_href %}
-                  <a href="{{ url }}">{{ value }}</a>
-                {% else %}
-                  {{ value }}
-                {% endif %}
-              </td>
-            {% endfor %}
-          </tr>
-        {% endfor %}
+        <table border="1">
+          <h3>if you didn't find yourself, or error with unknown reason, feel free to create issue.</h3>
+          {% for tr in non_grid_rows %}
+            <tr >
+              {% for value,do_href,url in tr %}
+                <td nowrap>
+                  {% if do_href %}
+                    <a href="{{ url }}">{{ value }}</a>
+                  {% else %}
+                    {{ value }}
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </table>
       {% endif %}
-    </table>
+    </div>
     <table>
       <tr>
         {% for value,url,do_href in pagenation_bar %}

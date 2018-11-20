@@ -11,10 +11,13 @@
 
 ![how_to_add](/how_to_add2.jpg)
 ### Didn't I capture your page nicely?
-+ You can pull request organized gif as you wish but within 500kb.
++ You can upload via pull request organized gif as you wish but within 500kb.
 
 ### Where is my gif?
-+ Please try https://umihico.github.io/thumbnailed-portfolio-websites/gifs/YOURNAME-YOURREPOSITORYNAME.gif
++ Please check [all information here](https://umihico.github.io/thumbnailed-portfolio-websites/database.html) an search your name. Feel free to create issue when you don't understand why.
+
+### I put places in my profile but I don't have geotag
++ Due to API limitation, it takes time to crawl all users profile. sorry.
 
 ### Contribution
 + Beautifying layout or any advice and suggestions will be greatly appreciated.

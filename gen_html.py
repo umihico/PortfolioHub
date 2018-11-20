@@ -37,14 +37,14 @@ tags_info = gen_tags()
 def index(path):
     if path == 'database.html':
         return alluser()
-    headline_menu, tabulated_repos, max_page_num, tags_num = path_data_dict[path]
+    headline_menu, chunked_repos, max_page_num, tags_num = path_data_dict[path]
     pagenation_bar = gen_pagenation_bar(path, max_page_num)
     return render_template(
         'templete.html',
         tags_info=tags_info,
         tags_num=tags_num,
         headline_menu=headline_menu,
-        tabulated_repos=tabulated_repos,
+        repos=chunked_repos,
         pagenation_bar=pagenation_bar,
         grid=True,
         non_grid_rows=None)
@@ -94,7 +94,7 @@ def alluser():
         tags_info=tags_info,
         tags_num=30,
         headline_menu=deactivated_headline,
-        tabulated_repos=[],
+        repos=[],
         pagenation_bar=list(),
         grid=False,
         non_grid_rows=non_grid_rows)
@@ -180,10 +180,10 @@ def gen_html_filename(filename, page_index):
 @raise_with_printed_args
 def render_static_files():
     css_write()
-    for filename, page_index, headline_menu, tabulated_repos, max_page_num, tags_num in iter_page_data():
+    for filename, page_index, headline_menu, chunked_repos, max_page_num, tags_num in iter_page_data():
         print("calculating", filename, page_index)
         path_data_dict[gen_html_filename(filename, page_index)] = (
-            headline_menu, tabulated_repos, max_page_num, tags_num)
+            headline_menu, chunked_repos, max_page_num, tags_num)
     paths = list(path_data_dict.keys())
     paths.append('database.html')
     build_static_files(paths)
@@ -222,12 +222,8 @@ def iter_page_data():
     for filename, headline_menu in iter_headline():
         sortkey = sortkey_dict[filename]
         all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
-        chunked_repos = chunks(all_repo, 9)
-        max_page_num = len(chunked_repos)
-        for page_index, nine_repo in enumerate(chunked_repos):
-            tubled_inforows = [to_tubled_inforow(repo) for repo in nine_repo]
-            tabulated_repos = chunks(tubled_inforows, 3)
-            yield filename, page_index + 1, headline_menu, tabulated_repos, max_page_num, 30
+        yield from yield_page_data(filename, headline_menu, all_repo)
+
     sortkey = "stargazers_count"
     all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
     user_tags_dict = {d['userdict']['username'].lower(): d['userdict']['tags']
@@ -248,13 +244,17 @@ def iter_page_data():
         for username in usernames:
             tag_repos.extend(user_repos_dict.get(username, []))
             # print(username)
-        chunked_repos = chunks(tag_repos, 9)
-        max_page_num = len(chunked_repos)
-        for page_index, nine_repo in enumerate(chunked_repos):
-            tubled_inforows = [to_tubled_inforow(repo) for repo in nine_repo]
-            tabulated_repos = chunks(tubled_inforows, 3)
-            yield 'location-' + tag, page_index + 1, deactivated_headline, tabulated_repos, max_page_num, 30
+        yield from yield_page_data('location-' + tag, deactivated_headline, tag_repos)
     yield 'locations', '0', deactivated_headline, [], 1, 9999999
+
+
+def yield_page_data(path, headline_menu, repos):
+    chunked_repos_list = chunks(repos, 12)
+    max_page_num = len(chunked_repos_list)
+    for page_index, chunked_repos in enumerate(chunked_repos_list):
+        chunked_repos = [to_tubled_inforow(
+            repo) for repo in chunked_repos]
+        yield path, page_index + 1, headline_menu, chunked_repos, max_page_num, 30
 
 
 def to_tubled_inforow(repo):
