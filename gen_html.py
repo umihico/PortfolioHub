@@ -15,7 +15,7 @@ deactivated_headline = [(url + '0001.html', key, False)
 def gen_tags():
     chained_location_tags = []
     for d in db.all():
-        if 'userdict' in d:
+        if 'userdict' in d and d['gif_success'] and d['homepage_exist']:
             chained_location_tags.extend(d['userdict']['tags'])
     counted_tagdict = collections.Counter(chained_location_tags)
     # Counter({'a': 4, 'c': 2, 'b': 1})
