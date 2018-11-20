@@ -13,6 +13,7 @@ body { background: #dddddd !important;}
     border: solid 1px #5d627b;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.22);
     max-width: 520px;
+    height: 450px;
 }
 .userbox li {
     margin: 0;

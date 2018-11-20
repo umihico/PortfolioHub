@@ -310,5 +310,5 @@ if __name__ == "__main__":
     # test_app()
     # test_build_static_files()
     # test_gen_pagenation_bar()
-    render_static_files()
+    # render_static_files()
     css_write()
