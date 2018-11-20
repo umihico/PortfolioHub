@@ -49,11 +49,10 @@ def top():
     return redirect('/most_stars0001.html')
 
 
-# @app.route('/database.html/')
 def alluser():
     non_grid_rows = []
-    non_grid_rows.append([(x, False, x) for x in ['name', 'repo', 'star', 'fork',
-                                                  'portfolio', 'valid url', 'gif success', 'updated_at', 'gif_url', 'locations']])
+    non_grid_rows.append([(x, False, x) for x in ['name', 'repository', 'star', 'fork',
+                                                  'website', 'valid url', 'gif success', 'updated_at', 'gif', 'locations']])
     for d in db.all():
         full_name = d['full_name']
         repourl = 'https://github.com/' + full_name
@@ -68,12 +67,13 @@ def alluser():
             d.get('userdict', {}).get('tags', []))
         locations = locations if locations else 'None'
         gif_url = gen_filename(d['full_name'])
-
         tr = []
         for x in [name, repourl, star, forks, homepage,
                   homepage_exist, gif_success, updated_at, gif_url, locations]:
-            value = 'url' if x == homepage else 'gif' if x == gif_url else 'repository' if x == repourl else x
-            href_bool = bool(value in ['url', 'gif', 'repository'])
+            value = 'website' if x == homepage else 'gif' if x == gif_url else 'repository' if x == repourl else x
+            href_bool = bool(value in ['website', 'gif', 'repository'])
+            if x == homepage and x is None:
+                href_bool = False
             tr.append((value, href_bool, x))
         non_grid_rows.append(tr)
     for tr in non_grid_rows:

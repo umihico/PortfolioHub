@@ -19,7 +19,7 @@
       {% for tag,count in tags_info[:tags_num] %}
         <a href="location-{{ tag }}0001.html">{{ tag }}({{ count }})</a> /
       {% endfor %}
-      <a href="locations.html">ALL LOCATIONS</a>
+      <a href="locations.html">ALL LOCATIONS</a>/<a href="database.html">didn't find yourself?</a>
       <br>
     </table>
     <table align="center">
@@ -36,7 +36,7 @@
       </tr>
 
     </table>
-    <table align="center">
+    <table align="center" border="1">
       {% if grid %}
         {% for tr_repos in tabulated_repos %}
           <tr>
@@ -64,8 +64,11 @@
           </tr>
         {% endfor %}
       {% else %}
+        <tr>
+          <td colspan="10"> if you didn't find yourself, or error with unknown reason, feel free to create issue.</td>
+        </tr>
         {% for tr in non_grid_rows %}
-          <tr border="1">
+          <tr >
             {% for value,do_href,url in tr %}
               <td nowrap>
                 {% if do_href %}
