@@ -12,6 +12,12 @@ deactivated_headline = [(url + '0001.html', key, False)
                         for key, url in headline_menus_strings_keys]
 
 
+def css_write():
+    with open('templates/css.css', mode='r') as r:
+        with open('../umihico.github.io/thumbnailed-portfolio-websites/css.css', mode='w') as w:
+            w.write(r.read())
+
+
 def gen_tags():
     chained_location_tags = []
     for d in db.all():
@@ -173,6 +179,7 @@ def gen_html_filename(filename, page_index):
 
 @raise_with_printed_args
 def render_static_files():
+    css_write()
     for filename, page_index, headline_menu, tabulated_repos, max_page_num, tags_num in iter_page_data():
         print("calculating", filename, page_index)
         path_data_dict[gen_html_filename(filename, page_index)] = (
@@ -304,3 +311,4 @@ if __name__ == "__main__":
     # test_build_static_files()
     # test_gen_pagenation_bar()
     render_static_files()
+    css_write()

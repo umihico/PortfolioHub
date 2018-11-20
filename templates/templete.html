@@ -1,10 +1,14 @@
 <html>
   <head>
+    <link rel="stylesheet" href="css.css" type="text/css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
   </head>
-  <body bgcolor='DDDDDD'>
-    <table align="center">
-      <h2 align="center">GIF Screenshots of everybody's <a href="https://github.com/topics/portfolio-website">#portfolio-websites</a> on GitHub</h2>
-      <h3 align="center"><a href="https://github.com/umihico/thumbnailed-portfolio-websites/">Star this project!</a></h3>
+  <body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <h2>GIF Screenshots of everybody's <a href="https://github.com/topics/portfolio-website">#portfolio-websites</a> on GitHub</h2>
+    <h3><a href="https://github.com/umihico/thumbnailed-portfolio-websites/">Star this project!</a></h3>
+    <table>
       <tr>
         {% for url,value,self in headline_menu %}
           <td>
@@ -22,7 +26,7 @@
       <a href="locations.html">ALL LOCATIONS</a>/<a href="database.html">didn't find yourself?</a>
       <br>
     </table>
-    <table align="center">
+    <table>
       <tr>
         {% for value,url,do_href in pagenation_bar %}
           <td>
@@ -36,13 +40,13 @@
       </tr>
 
     </table>
-    <table align="center" border="1">
+    <table class="pgif-table">
       {% if grid %}
         {% for tr_repos in tabulated_repos %}
           <tr>
             {% for filename, tubled_inforows, location_tags in tr_repos %}
               <td>
-                <img src="{{ filename }}" alt="{{ filename }}">
+                <img src="{{ filename }}" alt="{{ filename }}" class="pgif">
                 {% for string,url,do_herf in tubled_inforows %}
                   <li>
                   {% if do_herf %}
@@ -82,7 +86,7 @@
         {% endfor %}
       {% endif %}
     </table>
-    <table align="center">
+    <table>
       <tr>
         {% for value,url,do_href in pagenation_bar %}
           <td>
