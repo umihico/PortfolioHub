@@ -35,6 +35,8 @@ tags_info = gen_tags()
 
 @app.route('/<path>/')
 def index(path):
+    if path == 'favicon.ico':
+        return
     if path == 'database.html':
         return alluser()
     headline_menu, chunked_repos, max_page_num, tags_num = path_data_dict[path]
@@ -168,6 +170,7 @@ def build_static_files(paths):
             print("writing", path)
             yield "/" + path
     freezer.freeze()
+    css_write()
 
 
 def gen_html_filename(filename, page_index):
@@ -175,18 +178,6 @@ def gen_html_filename(filename, page_index):
         return filename + '.html'
     else:
         return filename + str(page_index).zfill(4) + '.html'
-
-
-@raise_with_printed_args
-def render_static_files():
-    css_write()
-    for filename, page_index, headline_menu, chunked_repos, max_page_num, tags_num in iter_page_data():
-        print("calculating", filename, page_index)
-        path_data_dict[gen_html_filename(filename, page_index)] = (
-            headline_menu, chunked_repos, max_page_num, tags_num)
-    paths = list(path_data_dict.keys())
-    paths.append('database.html')
-    build_static_files(paths)
 
 
 def mention_users_in_issue(usernames):
@@ -300,7 +291,7 @@ def test_app():
     app.root_path = os.path.join(os.path.dirname(
         app.root_path), 'umihico.github.io')
     print(app.root_path)
-    app.run(port=12167)
+    app.run(debug=False, port=12167, host='0.0.0.0')
 
 
 def put_username():
@@ -310,13 +301,25 @@ def put_username():
         db.upsert(d)
 
 
+@raise_with_printed_args
+def render_static_files():
+    for filename, page_index, headline_menu, chunked_repos, max_page_num, tags_num in iter_page_data():
+        print("calculating", filename, page_index)
+        path_data_dict[gen_html_filename(filename, page_index)] = (
+            headline_menu, chunked_repos, max_page_num, tags_num)
+    paths = list(path_data_dict.keys())
+    paths.append('database.html')
+    return paths
+
+
+pagepaths = render_static_files()
 if __name__ == "__main__":
+    # put_username()
     # usernames = load_from_txt('current_users.txt')
     # mention_users_in_issue(usernames)
     # gen_current_users()
     # test_app()
     # test_build_static_files()
     # test_gen_pagenation_bar()
-    # put_username()
-    render_static_files()
+    build_static_files(paths=pagepaths)
     # css_write()

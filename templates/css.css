@@ -1,10 +1,42 @@
+.userboxes {  margin: 0px 10px auto; padding:0px 10px;}
+body {font-family: "Century Gothic",sans-serif !important;font-weight: bold !important; }
+.no-wrap {display: inline-block; }
+table {  margin: 0px auto;}
+.locations {  margin: 10px 20px auto; padding:10px 20px;}
+h2 {
+     text-align: center;
+}
 
-table {  margin: 0px auto; }
-h1 { text-align:center;}
-h2 { text-align:center;}
+h2 span{
+     position: relative;
+     display: inline-block;
+     padding-bottom:0.5em;
+     border-bottom: 1px solid black;
+
+
+
+}
+
+h2 span::before,
+h2 span::after {
+     position: absolute;
+     top: 100%;
+     left:50%;
+     transform:translateX(-50%);
+     content: '';
+     border: 10px solid transparent;
+}
+
+h2 span::before {
+     border-top: 10px solid black;
+}
+
+h2 span::after {
+     margin-top: -1px;
+     border-top: 10px solid white;
+}
 h3 { text-align:center;}
 h4 { text-align:center;}
-body { background: #dddddd !important;}
 .userbox{
     padding: 0.5em 1em;
     margin: 2em 0;
@@ -13,7 +45,7 @@ body { background: #dddddd !important;}
     border: solid 1px #5d627b;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.22);
     max-width: 520px;
-    height: 450px;
+    height: 500px;
 }
 .userbox li {
     margin: 0;

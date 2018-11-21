@@ -1,98 +1,111 @@
 <html>
   <head>
+    <link rel="shortcut icon" href="https://umihico.github.io/favicon.ico">
     <link rel="stylesheet" href="css.css" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
   </head>
   <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <h2>GIF Screenshots of everybody's <a href="https://github.com/topics/portfolio-website">#portfolio-websites</a> on GitHub</h2>
-    <h3><a href="https://github.com/umihico/thumbnailed-portfolio-websites/">Star this project!</a></h3>
-    <table>
+    <h2><span>GIF Screenshots of everybody's <a href="https://github.com/topics/portfolio-website">#portfolio-website</a>s on GitHub</h2>
+    <h3>
+      <div class="no-wrap">
+        <a href="https://github.com/umihico/thumbnailed-portfolio-websites/">Repository@GitHub</a>
+      </div>
+      <div class="no-wrap">
+        <a class="github-button" href="https://github.com/umihico/thumbnailed-portfolio-websites" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star umihico/thumbnailed-portfolio-websites on GitHub">Star</a>　<a class="github-button" href="https://github.com/umihico/thumbnailed-portfolio-websites/issues" data-icon="octicon-issue-opened" data-size="large" data-show-count="true" aria-label="Issue umihico/thumbnailed-portfolio-websites on GitHub">Issue</a>
+      </div>
+    </h3>
+    <div class="locations">
       {% for tag,count in tags_info[:tags_num] %}
-        <a href="location-{{ tag }}0001.html">{{ tag }}({{ count }})</a> /
+        <a href="location-{{ tag }}0001.html">{{ tag }}({{ count }})</a>　
       {% endfor %}
-      <a href="locations.html">ALL LOCATIONS</a>/<a href="database.html">didn't find yourself?</a>
       <br>
-    </table>
+    </div>
     <div class="row">
       {% for url,value,self in headline_menu %}
         <div class="col-sm-6 col-md-4">
           {% if self %}
-            <h2>{{ value }}</h2>
+            <h3>{{ value }}</h3>
           {% else %}
             <h3><a href="{{ url }}">{{ value }}</a></h3>
           {% endif %}
         </div>
       {% endfor %}
+      <div class="col-sm-6 col-md-4"><h3><a href="locations.html">All locations</a></h3></div>
+      <div class="col-sm-6 col-md-4"><h3><a href="database.html">All users</a></h3></div>
     </div>
     <table>
       <tr>
         {% for value,url,do_href in pagenation_bar %}
           <td>
             {% if do_href %}
-            <a href="{{ url }}">{{ value }}</a>
+            <a href="{{ url }}">{{ value }}　</a>
             {% else %}
-              {{ value }}
+              {{ value }}　
             {% endif %}
           </td>
         {% endfor %}
       </tr>
 
     </table>
-    <div class="row">
-      {% if grid %}
-        {% for filename, tubled_inforows, location_tags in repos %}
-          <div class="col-sm-6 col-md-4">
-            <div class="userbox">
-              <a href="{{ filename }}"><img src="{{ filename }}" alt="{{ filename }}"></a>
-              {% for string,url,do_herf in tubled_inforows %}
-                <li>
-                {% if do_herf %}
-                  <a href="{{ url }}">{{ string }}</a>
-                {% else %}
-                  {{ string }}
-                {% endif %}
-                </li>
-              {% endfor %}
-              {% if location_tags %}
-                <li>
-                {% for location_tag in location_tags %}
-                  <a href="location-{{ location_tag }}0001.html">{{ location_tag }}</a> /
-                {% endfor %}
-                </li>
-              {% endif %}
-            </div>
-          </div>
-        {% endfor %}
-      {% else %}
-        <table border="1">
-          <h3>if you didn't find yourself, or error with unknown reason, feel free to create issue.</h3>
-          {% for tr in non_grid_rows %}
-            <tr >
-              {% for value,do_href,url in tr %}
-                <td nowrap>
-                  {% if do_href %}
-                    <a href="{{ url }}">{{ value }}</a>
+    <br>
+    <div class="userboxes">
+      <div class="row">
+        {% if grid %}
+          {% for filename, tubled_inforows, location_tags in repos %}
+            <div class="col-sm-6 col-md-4">
+              <div class="userbox">
+                <a href="{{ filename }}"><img src="{{ filename }}" alt="{{ filename }}"></a>
+                {% for string,url,do_herf in tubled_inforows %}
+                  <li>
+                  {% if do_herf %}
+                    <a href="{{ url }}">{{ string }}</a>
                   {% else %}
-                    {{ value }}
+                    {{ string }}
                   {% endif %}
-                </td>
-              {% endfor %}
-            </tr>
+                  </li>
+                {% endfor %}
+                {% if location_tags %}
+                  <li>
+                  {% for location_tag in location_tags %}
+                    <a href="location-{{ location_tag }}0001.html">{{ location_tag }}</a> /
+                  {% endfor %}
+                  </li>
+                {% endif %}
+              </div>
+            </div>
           {% endfor %}
-        </table>
-      {% endif %}
+        {% else %}
+          <table border="1">
+            <h3>if you didn't find yourself, or error with unknown reason, feel free to create issue.</h3>
+            {% for tr in non_grid_rows %}
+              <tr >
+                {% for value,do_href,url in tr %}
+                  <td nowrap>
+                    {% if do_href %}
+                      <a href="{{ url }}">{{ value }}</a>
+                    {% else %}
+                      {{ value }}
+                    {% endif %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
+      </div>
     </div>
     <table>
       <tr>
         {% for value,url,do_href in pagenation_bar %}
           <td>
             {% if do_href %}
-            <a href="{{ url }}">{{ value }}</a>
+            <a href="{{ url }}">{{ value }}　</a>
             {% else %}
-              {{ value }}
+              {{ value }}　
             {% endif %}
           </td>
         {% endfor %}

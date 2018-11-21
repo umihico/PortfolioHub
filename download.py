@@ -37,7 +37,8 @@ def should_gif_download(repo):
     if not os.path.exists(filename):
         # print("no gif yet", full_name)
         return True
-    if _conv_updated_at_comparable(repo['updated_at']) > _conv_updated_at_comparable(db_repo['updated_at']):
+    if _conv_updated_at_comparable(repo['updated_at']) > _conv_updated_at_comparable(db_repo['updated_at']) and and repo['db_updated_at'] - db_repo['db_updated_at'] > 60 * 60 * 24:
+
         # print("github updated", full_name)
         return True
     if optional_scraping_forcer(repo):
