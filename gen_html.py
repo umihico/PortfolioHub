@@ -1,6 +1,6 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
-from common import html_dir, db, chunks, gen_filename, numberize_int, que, location_db, raise_with_printed_args, content_tinydb, get_username, save_as_txt, load_from_txt
+from common import html_dir, db, chunks, gen_filename, numberize_int, que, raise_with_printed_args, get_username, save_as_txt, load_from_txt
 import collections
 app = Flask(__name__)
 
@@ -61,8 +61,8 @@ def alluser():
                                                   'website', 'valid url', 'gif success', 'updated_at', 'gif', 'locations']])
     for d in db.all():
         full_name = d['full_name']
-        repourl = 'https://github.com/' + full_name
-        name = full_name.split('/')[0]
+        repourl = 'https://github.com/' + d['full_name']
+        name = d['username']
         star = d['stargazers_count']
         forks = d['forks']
         homepage = d['homepage']
@@ -235,7 +235,7 @@ def iter_page_data():
             tag_users_dict.setdefault(tag, []).append(username)
     user_repos_dict = {}
     for repo in all_repo:
-        username = repo['full_name'].split('/')[0].lower()
+        username = repo['username'].lower()
         # print(username)
         user_repos_dict.setdefault(username, []).append(repo)
     for tag, count in tags_info:
@@ -263,11 +263,11 @@ def to_tubled_inforow(repo):
         print(repo)
         raise
     tubled_inforow = []
-    username = repo['full_name'].split('/')[0]
+    username = repo['username']
     tubled_inforow.append(
         ('name:' + username, "", False))
     tubled_inforow.append(
-        ('repo:' + repo['full_name'].split('/')[1], repo['html_url'], True))
+        ('repo:' + repo['reponame'], repo['html_url'], True))
     tubled_inforow.append(('portfolio website', repo['homepage'], True))
     tubled_inforow.append(
         (f"{repo['stargazers_count']} stars", repo['html_url'] + '/stargazers', True))
@@ -303,6 +303,13 @@ def test_app():
     app.run(port=12167)
 
 
+def put_username():
+    for d in db.all():
+        username, reponame = d['full_name'].split('/')
+        d['username'], d['reponame'] = username, reponame
+        db.upsert(d)
+
+
 if __name__ == "__main__":
     # usernames = load_from_txt('current_users.txt')
     # mention_users_in_issue(usernames)
@@ -310,5 +317,6 @@ if __name__ == "__main__":
     # test_app()
     # test_build_static_files()
     # test_gen_pagenation_bar()
-    # render_static_files()
-    css_write()
+    # put_username()
+    render_static_files()
+    # css_write()

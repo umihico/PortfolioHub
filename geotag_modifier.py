@@ -3,7 +3,7 @@ from geotag_dicts import convert_dict_usa_states, list_of_largest_cities
 import re
 letters_space_only = re.compile('[a-zA-Z ]')
 letters_only = re.compile('[a-zA-Z]')
-from common import location_db, que, raise_with_printed_args
+from common import que, raise_with_printed_args
 
 
 @raise_with_printed_args

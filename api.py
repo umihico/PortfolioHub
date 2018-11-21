@@ -4,7 +4,8 @@ import pprint
 import time
 import datetime
 import tinydb
-from common import load_db,  que, location_db
+from common import que, hash_username
+from no_thanks import no_thanks
 
 
 def _created_range_iter():
@@ -78,8 +79,13 @@ def iter_repo(topic="portfolio-website"):
             if repo['html_url'] in urlset:
                 continue
             urlset.add(repo['html_url'])
+            username, reponame = repo['full_name'].split('/', maxsplit=1)
+            repo['username'] = username
+            repo['reponame'] = reponame
+            if hash_username(repo['username']) in no_thanks:
+                print('skipped', repo['full_name'])
+                continue
             if not repo['homepage'] and repo['full_name'].endswith('.github.io'):
-                username, reponame = repo['full_name'].split('/', maxsplit=1)
                 if username == reponame.replace(".github.io", ''):
                     # such as 'umihico/umihic.github.io'
                     homepage = "https://" + reponame
@@ -160,8 +166,8 @@ def get_users_location_boost():
     import threading
     import queue
     content_tinydb = load_db()
-    usernames = [r['full_name'].split('/')[0] for r in content_tinydb.all()
-                 if not location_db.search(que.username == r['full_name'].split('/')[0])]
+    usernames = [r['username'] for r in content_tinydb.all()
+                 if not location_db.search(que.username == r['username'])]
     username_queue = queue.Queue()
     print(len(usernames))
     print(usernames)

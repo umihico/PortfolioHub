@@ -1,7 +1,8 @@
 from scraping import url_to_gif
 from api import iter_repo, get_userlocation_rawjson
 import pprint
-from common import html_dir, load_db, gen_filename, content_tinydb, que, db, update_db, _reduce_amount, get_username
+from no_thanks import no_thanks
+from common import html_dir,  gen_filename, que, db, update_db, _reduce_amount, get_username, load_from_txt, save_as_txt, hash_username
 import os
 from PIL import Image
 import time
@@ -23,23 +24,26 @@ def optional_scraping_forcer(repo):
 def should_gif_download(repo):
     full_name = repo['full_name']
     if not repo['homepage_exist']:
-        print("no homepage", full_name)
+        # print("no homepage", full_name)
         return False
     db_repo = db.get_repo(repo)
     if not db_repo:
-        print("found new", full_name)
+        # print("found new", full_name)
+        todays_new = load_from_txt('todays_new.txt')
+        todays_new.append(full_name)
+        save_as_txt('todays_new.txt', todays_new)
         return True
     filename = html_dir + gen_filename(repo['full_name'])
     if not os.path.exists(filename):
-        print("no gif yet", full_name)
+        # print("no gif yet", full_name)
         return True
     if _conv_updated_at_comparable(repo['updated_at']) > _conv_updated_at_comparable(db_repo['updated_at']):
-        print("github updated", full_name)
+        # print("github updated", full_name)
         return True
     if optional_scraping_forcer(repo):
-        print("optional_scraping_forcer", full_name)
+        # print("optional_scraping_forcer", full_name)
         return True
-    print("already done", full_name)
+    # print("already done", full_name)
     return False
 
 
@@ -51,6 +55,7 @@ def _conv_updated_at_comparable(raw_updated_at):
 
 
 def download_all():
+    save_as_txt('todays_new.txt', [])
     chrome = None
     starttime = time.time()
     del_old_repo(starttime)
@@ -63,6 +68,15 @@ def download_all():
             repo['gif_success'] = gif_success
         update_db(repo)
     update_location()
+    del_no_thanks()
+    todays_new = load_from_txt('todays_new.txt')
+    print(todays_new)
+
+
+def del_no_thanks_users():
+    for d in db.all():
+        if hash_username(d['username']) in no_thanks:
+            db.remove(d)
 
 
 def del_old_repo(starttime):

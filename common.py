@@ -5,27 +5,12 @@ import time
 que = tinydb.Query()
 
 
-def load_db():
-    content_tinydb = tinydb.TinyDB('content_tinydb.json')
-    return content_tinydb
-
-
-content_tinydb = load_db()
-
-
-def load_location_db():
-    location_db = tinydb.TinyDB('location.json')
-    return location_db
-
-
-location_db = load_location_db()
-
-
 class DictTinyDB():
     def __init__(self, filename, unique_key):
         self.db = tinydb.TinyDB(filename)
         self.unique_key = unique_key
-        self.que = getattr(tinydb.Query(), self.unique_key)
+        self.query = tinydb.Query()
+        self.que = getattr(self.query, self.unique_key)
 
     def all(self):
         for d in self.db.all():
@@ -117,17 +102,19 @@ def load_from_txt(filename):
         return _ast.literal_eval(f.read())
 
 
-if __name__ == '__main__':
-    import tqdm
-    # for d in tqdm.tqdm(content_tinydb.all()):
-    #     db.upsert(d)
+import hashlib
 
-    user_dicts = {d['username']: d for d in location_db.all()}
-    for d in tqdm.tqdm(db.all()):
-        username = get_username(d['full_name'])
-        # print(username)
-        location_dict = user_dicts.get(username)
-        if location_dict:
-            # print(username)
-            d['userdict'] = location_dict
-            update_db(d)
+
+def hash_username(username):
+    sha256 = hashlib.sha256()
+    sha256.update(username.lower().encode())
+    hashed_text = sha256.hexdigest()
+    return hashed_text
+
+
+def test_hash_username(username='umihico'):
+    print(hash_username(username))
+
+
+if __name__ == '__main__':
+    test_hash_username(username='umihico')

@@ -4,6 +4,8 @@ from PIL import Image
 from io import BytesIO
 import time
 
+import traceback
+
 
 def gen_chrome():
     options = ChromeOptions()
@@ -13,24 +15,23 @@ def gen_chrome():
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-gpu')
     options.add_argument('--window-size=2160,1440')
-    return Chrome(chrome_options=options)
+    chrome = Chrome(chrome_options=options)
+    chrome.set_page_load_timeout(30)
+    return chrome
 
 
 def _gen_images_for_gif(url, chrome=None):
-    while True:
+    try:
+        images = _gen_images_for_gif_main(url, chrome)
+    except Exception as e:
         try:
-            images = _gen_images_for_gif_main(url, chrome)
+            chrome.quit()
         except Exception as e:
-            if "chrome not reachable" in str(e):
-                try:
-                    chrome.quit()
-                except Exception as e:
-                    pass
-                    chrome = gen_chrome()
-            else:
-                raise
-        else:
-            return images
+            pass
+        chrome = gen_chrome()
+        return False, chrome
+    else:
+        return images, chrome
 
 
 def _gen_images_for_gif_main(url, chrome):
@@ -38,9 +39,9 @@ def _gen_images_for_gif_main(url, chrome):
     try:
         requests.get(url, timeout=10).raise_for_status()
     except Exception as e:
-        print("bad url", url)
+        # print("bad url", url)
         return False
-    print("chrome.get", url)
+    # print("chrome.get", url)
     chrome.get(url)
     images = []
     h = 0
@@ -70,7 +71,7 @@ def _test(url="http://www.albinotonnina.com/"):
 
 def url_to_gif(url, filename, chrome=None):
     chrome = chrome or gen_chrome()
-    images = _gen_images_for_gif(url, chrome)
+    images, chrome = _gen_images_for_gif(url, chrome)
     if images:
         images[0].save(filename, save_all=True,
                        append_images=images[1:], duration=600, loop=100, quality=30, optimize=True)
