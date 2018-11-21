@@ -1,7 +1,7 @@
 # thumbnailed-portfolio-websites
 > GIF Screenshots of everybody's [#portfolio-websites](https://github.com/topics/portfolio-website) on github
 ## [https://umihico.github.io/thumbnailed-portfolio-websites/](https://umihico.github.io/thumbnailed-portfolio-websites/)
-![toppage.gif](/toppage_.gif)
+![toppage.gif](/toppage.gif)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
 ### How to add my portfolio?
