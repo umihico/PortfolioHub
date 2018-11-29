@@ -35,7 +35,7 @@ class DictTinyDB():
         self.db.remove(self.que == repo[self.unique_key])
 
 
-db = DictTinyDB('db.json', 'html_url')
+db = DictTinyDB(html_dir + 'db.json', 'html_url')
 
 
 def chunks(list_, chunk_len):

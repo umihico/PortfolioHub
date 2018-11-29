@@ -4,8 +4,8 @@ import tqdm
 import time
 from common import DictTinyDB, db
 
-rawdb_l = DictTinyDB(
-    '../umihico.github.io/thumbnailed-portfolio-websites/rawdb_l.json', 'username')
+ldb = DictTinyDB(
+    '../umihico.github.io/thumbnailed-portfolio-websites/location.json', 'username')
 
 
 def geotag_update():
@@ -14,13 +14,13 @@ def geotag_update():
     ]
     print(len(should_update_usernames))
     lasttime_update_dict = {d['username']: d['updated_at']
-                            for d in rawdb_l.all()}
+                            for d in ldb.all()}
     should_update_usernames.sort(
         key=lambda name: lasttime_update_dict.get(name, 0))
     for username, location in iter_json_till_error(should_update_usernames):
         d = {'username': username,
              'location': location, 'updated_at': int(time.time())}
-        rawdb_l.upsert(d)
+        ldb.upsert(d)
 
 
 def iter_json_till_error(usernames):

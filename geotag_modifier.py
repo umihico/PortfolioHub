@@ -4,6 +4,8 @@ import re
 letters_space_only = re.compile('[a-zA-Z ]')
 letters_only = re.compile('[a-zA-Z]')
 from common import que, raise_with_printed_args
+from geotag_update import ldb
+import tqdm
 
 
 @raise_with_printed_args
@@ -60,5 +62,11 @@ def modify_local_database():
         location_db.upsert(d, que.username == d['username'])
 
 
+def modify_raw_geotag_db():
+    for d in tqdm.tqdm(list(ldb.all())):
+        d['tags'] = geotag(d['location'])
+        ldb.upsert(d)
+
+
 if __name__ == '__main__':
-    modify_local_database()
+    modify_raw_geotag_db()

@@ -1,7 +1,10 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
 from common import html_dir, db, chunks, gen_filename, numberize_int, que, raise_with_printed_args, get_username, save_as_txt, load_from_txt
+from geotag_update import ldb
+location_dict = {d['username']: d['tags'] for d in ldb.all()}
 import collections
+
 app = Flask(__name__)
 
 path_data_dict = {}
@@ -21,8 +24,8 @@ def css_write():
 def gen_tags():
     chained_location_tags = []
     for d in db.all():
-        if 'userdict' in d and d['gif_success'] and d['homepage_exist']:
-            chained_location_tags.extend(d['userdict']['tags'])
+        if location_dict.get(d['username'], list()) and d['gif_success'] and d['homepage_exist']:
+            chained_location_tags.extend(location_dict[d['username']])
     counted_tagdict = collections.Counter(chained_location_tags)
     # Counter({'a': 4, 'c': 2, 'b': 1})
     tags_counts = sorted(list(counted_tagdict.items()),
@@ -72,7 +75,7 @@ def alluser():
         gif_success = d.get('gif_success', 'not tried')
         updated_at = d['updated_at'][:10]
         locations = ','.join(
-            d.get('userdict', {}).get('tags', []))
+            location_dict.get(d['username'], []))
         locations = locations if locations else 'None'
         gif_url = gen_filename(d['full_name'])
         tr = []
@@ -162,7 +165,7 @@ def build_static_files(paths):
     freezer = Freezer(app)
     app.config['FREEZER_RELATIVE_URLS'] = False
     app.config['FREEZER_DESTINATION'] = html_dir
-    app.config['FREEZER_DESTINATION_IGNORE'] = ["gifs", ]
+    app.config['FREEZER_DESTINATION_IGNORE'] = ["gifs", '*.json']
 
     @freezer.register_generator
     def product_url_generator():
@@ -217,8 +220,8 @@ def iter_page_data():
 
     sortkey = "stargazers_count"
     all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
-    user_tags_dict = {d['userdict']['username'].lower(): d['userdict']['tags']
-                      for d in db.all() if 'userdict' in d}
+    user_tags_dict = {d['username'].lower(): location_dict[d['username']]
+                      for d in db.all() if d['username'] in location_dict}
     # print(user_tags_dict.keys())
     tag_users_dict = {}
     for username, tags in user_tags_dict.items():
@@ -267,7 +270,8 @@ def to_tubled_inforow(repo):
     tubled_inforow.append(
         ("updated:" + str(repo['updated_at'])[:10], '', False))
     gif_filename = gen_filename(repo['full_name'])
-    location_tags = repo['userdict']['tags'] if 'userdict' in repo else list()
+    location_tags = location_dict[repo['username']
+                                  ] if repo['username'] in location_dict else list()
     td = [gif_filename, tubled_inforow, location_tags]
     return td
 
@@ -312,8 +316,8 @@ def render_static_files():
     return paths
 
 
-pagepaths = render_static_files()
 if __name__ == "__main__":
+    pagepaths = render_static_files()
     # put_username()
     # usernames = load_from_txt('current_users.txt')
     # mention_users_in_issue(usernames)
