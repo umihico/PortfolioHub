@@ -67,7 +67,9 @@ def alluser():
     non_grid_rows = []
     non_grid_rows.append([(x, False, x) for x in ['name', 'repository', 'star', 'fork',
                                                   'website', 'valid url', 'gif success', 'updated_at', 'gif', 'locations']])
-    for d in db.all():
+    db_sorted_list = sorted(list(db.all()), key=lambda d: (
+        d['gif_success'], d['stargazers_count'], d['forks']), reverse=True)
+    for d in db_sorted_list:
         full_name = d['full_name']
         repourl = 'https://github.com/' + d['full_name']
         name = d['username']
@@ -95,8 +97,8 @@ def alluser():
         for value, do_href, url in tr:
             pass
     # print(non_grid_rows[0][2][0])
-    non_grid_rows.sort(
-        key=lambda x: 999999 if x[2][0] == 'star' else x[2][0], reverse=True)
+    # non_grid_rows.sort(
+    #     key=lambda x: 999999 if x[2][0] == 'star' else x[2][0], reverse=True)
     return render_template(
         'templete.html',
         tags_info=tags_info,
@@ -235,6 +237,8 @@ def iter_page_data():
         for username in usernames:
             tag_repos.extend(user_repos_dict.get(username, []))
             # print(username)
+        tag_repos.sort(
+            key=lambda repo: repo['stargazers_count'], reverse=True)
         yield from yield_page_data('location-' + tag, deactivated_headline, tag_repos)
     yield 'locations', '0', deactivated_headline, [], 1, 9999999
 
