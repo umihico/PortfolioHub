@@ -17,7 +17,7 @@ deactivated_headline = [(url + '0001.html', key, False)
 
 def css_write():
     with open('templates/css.css', mode='r') as r:
-        with open('../umihico.github.io/thumbnailed-portfolio-websites/css.css', mode='w') as w:
+        with open(html_dir + 'css.css', mode='w') as w:
             w.write(r.read())
 
 

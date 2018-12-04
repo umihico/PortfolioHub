@@ -1,4 +1,4 @@
-html_dir = "../umihico.github.io/thumbnailed-portfolio-websites/"
+html_dir = "../gh-pages/"
 import tinydb
 import time
 

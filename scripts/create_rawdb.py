@@ -5,7 +5,7 @@ import hashlib
 from itertools import zip_longest
 from no_thanks import no_thanks
 rawdb = DictTinyDB(
-    '../umihico.github.io/thumbnailed-portfolio-websites/rawdb.json', 'html_url')
+    html_dir + 'rawdb.json', 'html_url')
 
 
 def create_rawdb(topic="portfolio-website"):
