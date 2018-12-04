@@ -10,6 +10,9 @@ from geotag_modifier import geotag
 import tqdm
 from create_rawdb import rawdb
 
+import datetime
+import os
+
 
 def del_if_too_old(repo):
     disappear_days = (time.time() - repo['db_updated_at']) // (60 * 60 * 24)
@@ -41,7 +44,14 @@ def repo_is_updated(repo, raw_repo):
         # updated_at = (2011,1,26)
         updated_at = tuple([int(s) for s in raw_updated_at[:10].split('-')])
         return updated_at
-    return bool(time2day(raw_repo['updated_at']) > time2day(repo['updated_at']))
+
+    def gif_date(repo):
+        filename = html_dir + gen_filename(repo['full_name'])
+        date = datetime.date.fromtimestamp(
+            os.stat(filename).st_mtime) + datetime.timedelta(days=1)
+        created_at = (date.year, date.month, date.day)
+
+    return bool(time2day(raw_repo['updated_at']) > gif_date(repo))
 
 
 def update_repo(repo):
