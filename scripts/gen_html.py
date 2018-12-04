@@ -217,8 +217,6 @@ def iter_page_data():
         all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
         yield from yield_page_data(filename, headline_menu, all_repo)
 
-    sortkey = "stargazers_count"
-    all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
     user_tags_dict = {d['username'].lower(): location_dict[d['username']]
                       for d in db.all() if d['username'] in location_dict}
     # print(user_tags_dict.keys())
