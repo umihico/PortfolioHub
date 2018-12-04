@@ -50,6 +50,7 @@ def repo_is_updated(repo, raw_repo):
         date = datetime.date.fromtimestamp(
             os.stat(filename).st_mtime) + datetime.timedelta(days=1)
         created_at = (date.year, date.month, date.day)
+        return created_at
 
     return bool(time2day(raw_repo['updated_at']) > gif_date(repo))
 
