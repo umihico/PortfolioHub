@@ -1,6 +1,8 @@
-from download import download_all
-from gen_html import render_static_files
+from download import daily_update
+from gen_html import build_static_files
+from create_rawdb import create_rawdb
 
 if __name__ == '__main__':
-    download_all()
-    render_static_files()
+    create_rawdb()
+    daily_update()
+    build_static_files()

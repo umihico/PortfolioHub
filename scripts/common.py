@@ -1,4 +1,5 @@
 html_dir = "../gh-pages/"
+database_dir = '../database/'
 import tinydb
 import time
 
@@ -35,7 +36,7 @@ class DictTinyDB():
         self.db.remove(self.que == repo[self.unique_key])
 
 
-db = DictTinyDB(html_dir + 'db.json', 'html_url')
+db = DictTinyDB(database_dir + 'db.json', 'html_url')
 
 
 def chunks(list_, chunk_len):

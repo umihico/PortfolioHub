@@ -2,6 +2,9 @@ from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
 from common import html_dir, db, chunks, gen_filename, numberize_int, que, raise_with_printed_args, save_as_txt, load_from_txt
 from geotag_update import ldb
+for d in ldb.all():
+    if 'tags' not in d:
+        print(d)
 location_dict = {d['username']: d['tags'] for d in ldb.all()}
 import collections
 
@@ -161,7 +164,8 @@ def test_gen_pagenation_bar():
 
 
 @raise_with_printed_args
-def build_static_files(paths):
+def build_static_files():
+    paths = render_static_files()
     freezer = Freezer(app)
     app.config['FREEZER_RELATIVE_URLS'] = False
     app.config['FREEZER_DESTINATION'] = html_dir
@@ -310,7 +314,7 @@ def render_static_files():
 
 
 if __name__ == "__main__":
-    pagepaths = render_static_files()
+
     # put_username()
     # usernames = load_from_txt('current_users.txt')
     # mention_users_in_issue(usernames)
@@ -318,5 +322,5 @@ if __name__ == "__main__":
     # test_app()
     # test_build_static_files()
     # test_gen_pagenation_bar()
-    build_static_files(paths=pagepaths)
+    build_static_files()
     # css_write()

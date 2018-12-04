@@ -4,7 +4,6 @@ import re
 letters_space_only = re.compile('[a-zA-Z ]')
 letters_only = re.compile('[a-zA-Z]')
 from common import que, raise_with_printed_args
-from geotag_update import ldb
 import tqdm
 
 
@@ -53,19 +52,6 @@ add_country_dict = {
 for dict_ in [convert_dict, add_country_dict]:
     for key, value in list(dict_.items()):
         dict_[beautify_word(key)] = beautify_word(value)
-
-
-def modify_local_database():
-    for d in location_db.all():
-        d['tags'] = geotag(d['location'])
-        print(d['location'], d['tags'])
-        location_db.upsert(d, que.username == d['username'])
-
-
-def modify_raw_geotag_db():
-    for d in tqdm.tqdm(list(ldb.all())):
-        d['tags'] = geotag(d['location'])
-        ldb.upsert(d)
 
 
 if __name__ == '__main__':

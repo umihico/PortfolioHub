@@ -1,11 +1,11 @@
 # messed up
 from api import _json_iter
-from common import DictTinyDB, db
+from common import DictTinyDB, db, database_dir
 import hashlib
 from itertools import zip_longest
 from no_thanks import no_thanks
 rawdb = DictTinyDB(
-    html_dir + 'rawdb.json', 'html_url')
+    database_dir + 'rawdb.json', 'html_url')
 
 
 def create_rawdb(topic="portfolio-website"):
