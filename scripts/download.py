@@ -52,7 +52,8 @@ def repo_is_updated(repo, raw_repo):
         created_at = (date.year, date.month, date.day)
         return created_at
 
-    return bool(time2day(raw_repo['updated_at']) > gif_date(repo))
+    # gif_date(repo))
+    return bool(time2day(raw_repo['updated_at']) > time2day(repo['updated_at']))
 
 
 def update_repo(repo):
