@@ -71,16 +71,6 @@ def numberize_int(string):
     return int(numberize(string))
 
 
-def get_username(full_name):
-    return full_name.split('/')[0]
-
-
-def update_db(repo):
-    dict_data = _reduce_amount(repo)
-    dict_data['db_updated_at'] = time.time()
-    db.upsert(dict_data)
-
-
 def _reduce_amount(repo):
     keys = ["html_url", 'description', "size", 'stargazers_count', 'homepage',
             'watchers_count', 'forks', 'watchers', 'score', 'full_name', 'created_at', 'updated_at', 'gif_success', 'homepage_exist', 'userdict']

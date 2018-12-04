@@ -3,8 +3,9 @@ import requests
 from PIL import Image
 from io import BytesIO
 import time
-
 import traceback
+
+global_chrome_box = [None]
 
 
 def gen_chrome():
@@ -20,22 +21,25 @@ def gen_chrome():
     return chrome
 
 
-def _gen_images_for_gif(url, chrome=None):
+def _gen_images_for_gif(url):
+    if global_chrome_box[0] is None:
+        global_chrome_box[0] = gen_chrome()
+        chrome = global_chrome_box[0]
     try:
+
         images = _gen_images_for_gif_main(url, chrome)
     except Exception as e:
         try:
             chrome.quit()
         except Exception as e:
             pass
-        chrome = gen_chrome()
-        return False, chrome
+        global_chrome_box[0] = None
+        return False
     else:
-        return images, chrome
+        return images
 
 
 def _gen_images_for_gif_main(url, chrome):
-    chrome = chrome or gen_chrome()
     try:
         requests.get(url, timeout=10).raise_for_status()
     except Exception as e:
@@ -69,16 +73,15 @@ def _test(url="http://www.albinotonnina.com/"):
     url_to_gif(url, filename)
 
 
-def url_to_gif(url, filename, chrome=None):
-    chrome = chrome or gen_chrome()
-    images, chrome = _gen_images_for_gif(url, chrome)
-    if images:
+def url_to_gif(url, filename):
+    images = _gen_images_for_gif(url)
+    gif_success = bool(images)
+    if gif_success:
         images[0].save(filename, save_all=True,
                        append_images=images[1:], duration=600, loop=100, quality=30, optimize=True)
-    gif_success = True if images else False
     if gif_success:
         print('saved', filename)
-    return chrome, gif_success
+    return gif_success
 
 
 if __name__ == '__main__':

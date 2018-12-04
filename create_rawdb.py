@@ -13,7 +13,8 @@ def create_rawdb(topic="portfolio-website"):
     for json in _json_iter(topic=topic):
         total_count, repos = json['total_count'], json['items']
         for repo in repos:
-            if should_skip(repo['full_name']):
+            repo['username'], repo['reponame'] = repo['full_name'].split('/')
+            if should_skip(repo['username']):
                 continue
             repo = _reduce_amount(repo)
             rawdb.upsert(repo)
@@ -21,15 +22,14 @@ def create_rawdb(topic="portfolio-website"):
 
 def _reduce_amount(repo):
     keys = ["html_url",  'stargazers_count', 'homepage',
-            'forks', 'full_name',  'updated_at', 'gif_success', 'homepage_exist', 'userdict', 'requests_success', 'pushed_at']
+            'forks', 'full_name',  'updated_at', 'gif_success', 'homepage_exist', 'userdict', 'requests_success', 'pushed_at', 'username']
     return {k: v for k, v in repo.items() if k in keys}
 
 
-def should_skip(full_name):
-    username = full_name.split('/')[0]
+def should_skip(username):
     skip_bool = hash_username(username) in no_thanks
     if skip_bool:
-        print('skipped', full_name)
+        print('skipped', username)
     return skip_bool
 
 

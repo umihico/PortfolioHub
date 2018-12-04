@@ -1,6 +1,6 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
-from common import html_dir, db, chunks, gen_filename, numberize_int, que, raise_with_printed_args, get_username, save_as_txt, load_from_txt
+from common import html_dir, db, chunks, gen_filename, numberize_int, que, raise_with_printed_args, save_as_txt, load_from_txt
 from geotag_update import ldb
 location_dict = {d['username']: d['tags'] for d in ldb.all()}
 import collections
@@ -190,13 +190,6 @@ def mention_users_in_issue(usernames):
         print()
         print()
         print()
-
-
-def gen_current_users():
-    all_repo = content_tinydb.all()
-    current_users = [get_username(r['full_name'])
-                     for r in all_repo if r['gif_success']]
-    save_as_txt('current_users.txt', current_users)
 
 
 @raise_with_printed_args
