@@ -9,7 +9,7 @@
 + put portfolio url in description of your as 'website', or your repository name is YOURNAME.github.io
 + Please wait till next crawling.  
 
-![how_to_add](/readme_images/hhow_to_add2.jpg)
+![how_to_add](/readme_images/how_to_add2.jpg)
 ### Didn't I capture your page nicely?
 + You can upload via pull request organized gif as you wish but within 500kb.
 
