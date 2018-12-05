@@ -1,4 +1,4 @@
-html_dir = "../gh-pages-temp/"
+html_dir = "../gh-pages/"
 database_dir = '../database/'
 import tinydb
 import time
