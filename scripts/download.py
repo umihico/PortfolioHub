@@ -77,6 +77,7 @@ def update_repo(repo):
 def can_update_repo(repo):
     if not repo['homepage_exist']:
         return False
+    return True
 
 
 def zip_longest_db_rawdb():
