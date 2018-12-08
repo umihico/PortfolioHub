@@ -2,6 +2,7 @@ from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
 from common import html_dir, db, chunks, gen_filename, numberize_int, que, raise_with_printed_args, save_as_txt, load_from_txt
 from geotag_update import ldb
+from flask import Markup
 for d in ldb.all():
     if 'tags' not in d:
         print(d)
@@ -99,6 +100,20 @@ def alluser():
     # print(non_grid_rows[0][2][0])
     # non_grid_rows.sort(
     #     key=lambda x: 999999 if x[2][0] == 'star' else x[2][0], reverse=True)
+
+    trs = []
+    for tr in non_grid_rows:
+        herf_srcs = []
+        for value, do_href, url in tr:
+            herf_src = f'<a href="{url}">{value}</a>' if do_href else str(
+                value)
+            herf_srcs.append(herf_src)
+        tr_raw_src = '<td nowrap>' + \
+            '</td><td nowrap>'.join(herf_srcs) + "</td>"
+        trs.append(tr_raw_src)
+    trs_raw_src = '<tr>' + '</tr><tr>'.join(trs) + "</tr>"
+    raw_src = f'''<table border="1"><h3>if you didn't find yourself, or error with unknown reason, feel free to create issue.</h3>{trs_raw_src}</table>'''
+    non_grid_rows = Markup(raw_src)
     return render_template(
         'templete.html',
         tags_info=tags_info,

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="shortcut icon" href="https://umihico.github.io/favicon.ico">
     <link rel="stylesheet" href="css.css" type="text/css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -79,22 +79,7 @@
             </div>
           {% endfor %}
         {% else %}
-          <table border="1">
-            <h3>if you didn't find yourself, or error with unknown reason, feel free to create issue.</h3>
-            {% for tr in non_grid_rows %}
-              <tr >
-                {% for value,do_href,url in tr %}
-                  <td nowrap>
-                    {% if do_href %}
-                      <a href="{{ url }}">{{ value }}</a>
-                    {% else %}
-                      {{ value }}
-                    {% endif %}
-                  </td>
-                {% endfor %}
-              </tr>
-            {% endfor %}
-          </table>
+          {{ non_grid_rows }}
         {% endif %}
       </div>
     </div>
