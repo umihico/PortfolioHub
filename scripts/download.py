@@ -9,7 +9,7 @@ import time
 from geotag_modifier import geotag
 import tqdm
 from create_rawdb import rawdb
-
+from star import star_repo
 import datetime
 import os
 
@@ -23,6 +23,8 @@ def del_if_too_old(repo):
 
 def daily_update():
     for repo, raw_repo in zip_longest_db_rawdb():
+        if raw_repo and raw_repo['stargazers_count'] == 0:
+            star_repo(raw_repo['full_name'])
         if repo is None:
             print('NEW!!', raw_repo['full_name'])
             update_repo(raw_repo)
