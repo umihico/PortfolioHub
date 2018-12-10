@@ -46,6 +46,8 @@ def index(path):
         return
     if path == 'database.html':
         return alluser()
+    if path == 'purpose.html':
+        return purpose()
     headline_menu, chunked_repos, max_page_num, tags_num = path_data_dict[path]
     pagenation_bar = gen_pagenation_bar(path, max_page_num)
     return render_template(
@@ -113,6 +115,31 @@ def alluser():
         trs.append(tr_raw_src)
     trs_raw_src = '<tr>' + '</tr><tr>'.join(trs) + "</tr>"
     raw_src = f'''<table border="1"><h3>if you didn't find yourself, or error with unknown reason, feel free to create issue.</h3>{trs_raw_src}</table>'''
+    non_grid_rows = Markup(raw_src)
+    return render_template(
+        'templete.html',
+        tags_info=tags_info,
+        tags_num=30,
+        headline_menu=deactivated_headline,
+        repos=[],
+        pagenation_bar=list(),
+        grid=False,
+        non_grid_rows=non_grid_rows)
+
+
+def purpose():
+    purposes = [
+        "All websites has brilliant design. Nevertheless only top rated ones get views exponentially, and others get rarely.",
+        "learning designs from others takes time if you browse one by one.",
+        "It motivate people if they know the rivals in the same region",
+        "Or good to find friends too.",
+        "Also good for headhunters to filter by region and visit websites directly.",
+        "Owners get more visitors as a result.",
+        "If you like these ideas, please star this repository."
+    ]
+    raw_src = "<ul>" + "</ul><ul>".join(purposes) + "</ul>"
+    li = '<li style="font-size: 1.3em;">'
+    raw_src = li + raw_src + "</li>"
     non_grid_rows = Markup(raw_src)
     return render_template(
         'templete.html',
@@ -327,6 +354,7 @@ def render_static_files():
             headline_menu, chunked_repos, max_page_num, tags_num)
     paths = list(path_data_dict.keys())
     paths.append('database.html')
+    paths.append('purpose.html')
     return paths
 
 
