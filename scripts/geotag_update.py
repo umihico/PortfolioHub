@@ -3,7 +3,7 @@ import requests
 import tqdm
 import time
 from common import DictTinyDB, db, database_dir
-
+from geotag_modifier import geotag
 ldb = DictTinyDB(
     database_dir + 'location.json', 'username')
 
@@ -25,7 +25,7 @@ def geotag_update():
 
 
 def iter_json_till_error(usernames):
-    for username in tqdm.tqdm(usernames):
+    for username in usernames:
         time.sleep(1)
         location = get_location(username)
         print(location)
@@ -64,6 +64,7 @@ def test_get_location():
 
 def attach_geotag(d):
     d['tags'] = geotag(d['location'])
+    return d
 
 
 def modify_raw_geotag_db():
