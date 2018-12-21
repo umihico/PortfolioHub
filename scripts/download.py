@@ -91,6 +91,9 @@ def zip_longest_db_rawdb():
     rawdb_dict = {raw_repos['full_name']: raw_repos for raw_repos in rawdb.all()}
     db_dict = {repos['full_name']: repos for repos in db.all()}
     full_names = list(set([*rawdb_dict.keys(), *db_dict.keys()]))
+    new_names = set(full_names) - set(db_dict.keys())
+    old_names = set(full_names) - set(rawdb_dict.keys())
+    print("NEW", len(new_names), 'OLD', len(old_names))
     for full_name in tqdm.tqdm(full_names):
         yield db_dict.get(full_name),  rawdb_dict.get(full_name)
 
