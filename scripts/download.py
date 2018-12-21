@@ -33,6 +33,11 @@ def daily_update():
         else:
             if repo_is_updated(repo, raw_repo) or not git_exist(raw_repo):
                 update_repo(raw_repo)
+            else:
+
+                repo['reponame'] = raw_repo['reponame']
+                repo['api_url'] = raw_repo['api_url']
+                db.upsert(repo)
 
 
 def git_exist(repo):

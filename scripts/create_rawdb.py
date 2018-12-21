@@ -14,6 +14,7 @@ def create_rawdb(topic="portfolio-website"):
         total_count, repos = json['total_count'], json['items']
         for repo in repos:
             repo['username'], repo['reponame'] = repo['full_name'].split('/')
+            repo['api_url'] = json['url']
             if should_skip(repo['username']):
                 continue
             repo = _reduce_amount(repo)
@@ -21,8 +22,8 @@ def create_rawdb(topic="portfolio-website"):
 
 
 def _reduce_amount(repo):
-    keys = ["html_url",  'stargazers_count', 'homepage',
-            'forks', 'full_name',  'updated_at', 'gif_success', 'homepage_exist', 'userdict', 'requests_success', 'pushed_at', 'username']
+    keys = ["html_url",  'api_url', 'stargazers_count', 'homepage',
+            'forks', 'full_name',  'updated_at', 'gif_success', 'homepage_exist', 'userdict', 'requests_success', 'pushed_at', 'username', 'reponame']
     return {k: v for k, v in repo.items() if k in keys}
 
 
