@@ -2,10 +2,7 @@
 import requests
 import tqdm
 import time
-from common import DictTinyDB, db, database_dir
-
-ldb = DictTinyDB(
-    database_dir + 'location.json', 'username')
+from dbs import rawdb, db, ldb
 
 
 def geotag_update():

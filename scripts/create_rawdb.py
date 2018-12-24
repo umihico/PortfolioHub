@@ -1,15 +1,13 @@
 # messed up
 from api import _json_iter
-from common import DictTinyDB, db, database_dir
 import hashlib
 from itertools import zip_longest
 from no_thanks import no_thanks
-rawdb = DictTinyDB(
-    database_dir + 'rawdb.json', 'html_url')
+from dbs import rawdb, db, ldb
 
 
 def create_rawdb(topic="portfolio-website"):
-    rawdb.db.purge()
+    rawdb.erase_all()
     for json in _json_iter(topic=topic):
         total_count, repos = json['total_count'], json['items']
         for repo in repos:
@@ -19,10 +17,11 @@ def create_rawdb(topic="portfolio-website"):
                 continue
             repo = _reduce_amount(repo)
             rawdb.upsert(repo)
+    rawdb.save()
 
 
 def _reduce_amount(repo):
-    keys = ["html_url",  'api_url', 'stargazers_count', 'homepage',
+    keys = ['last_found_date', "html_url",  'api_url', 'stargazers_count', 'homepage',
             'forks', 'full_name',  'updated_at', 'gif_success', 'homepage_exist', 'userdict', 'requests_success', 'pushed_at', 'username', 'reponame']
     return {k: v for k, v in repo.items() if k in keys}
 

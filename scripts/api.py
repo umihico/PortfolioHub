@@ -4,7 +4,7 @@ import pprint
 import time
 import datetime
 import tinydb
-from common import que, hash_username
+from common import hash_username
 from no_thanks import no_thanks
 
 

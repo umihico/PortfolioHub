@@ -2,27 +2,35 @@ from scraping import url_to_gif
 from api import iter_repo, get_userlocation_rawjson
 import pprint
 from no_thanks import no_thanks
-from common import html_dir,  gen_filename, db
+from common import html_dir,  gen_filename
+from dbs import rawdb, db, ldb
 import os
 from PIL import Image
 import time
 from geotag_modifier import geotag
 import tqdm
-from create_rawdb import rawdb
 from star import star_repo
 import datetime
 import os
 
 
 def del_if_too_old(repo):
-    disappear_days = (time.time() - repo['db_updated_at']) // (60 * 60 * 24)
+    disappear_days = (int(time.time()) -
+                      repo['last_found_date']) // (60 * 60 * 24)
     if disappear_days > 7:
         print('del', disappear_days, 'days', repo['full_name'],)
-        db.del_repo(repo)
+        del db[db.gen_key(repo)]
+
+
+def update_last_found_date(repo):
+    repo['last_found_date'] = int(time.time())
+    db.upsert(repo)
 
 
 def daily_update():
     for repo, raw_repo in zip_longest_db_rawdb():
+        if raw_repo and repo:
+            update_last_found_date(repo)
         if raw_repo and raw_repo['stargazers_count'] == 0:
             star_repo(raw_repo['full_name'])
         if repo is None:
@@ -38,6 +46,7 @@ def daily_update():
                 repo['reponame'] = raw_repo['reponame']
                 repo['api_url'] = raw_repo['api_url']
                 db.upsert(repo)
+    db.save()
 
 
 def git_exist(repo):
@@ -76,6 +85,7 @@ def update_repo(repo):
         gif_success = False
     repo['gif_success'] = gif_success
     repo['db_updated_at'] = time.time()
+    update_last_found_date(repo)
     db.upsert(repo)
 
 #
