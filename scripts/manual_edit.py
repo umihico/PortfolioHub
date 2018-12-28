@@ -1,13 +1,17 @@
-from common import db
+from dbs import rawdb, db, ldb
 import tqdm
+import time
 
 
-def add_reponame_username():
+def manual_edit():
     for d in tqdm.tqdm(db.all()):
-        if 'reponame' not in d:
-            d['username'], d['reponame'] = d['full_name'].split('/')
-            db.upsert(d)
+        del d['last_found_date']
+        db.upsert(d)
+    db.save()
+    # if 'reponame' not in d:
+    #     d['username'], d['reponame'] = d['full_name'].split('/')
+    #     db.upsert(d)
 
 
 if __name__ == '__main__':
-    add_reponame_username()
+    manual_edit()

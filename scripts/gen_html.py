@@ -1,11 +1,8 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
-from common import html_dir, db, chunks, gen_filename, numberize_int, que, raise_with_printed_args, save_as_txt, load_from_txt
-from geotag_update import ldb
+from common import html_dir,  chunks, gen_filename, numberize_int,  raise_with_printed_args, save_as_txt, load_from_txt
+from dbs import rawdb, db, ldb
 from flask import Markup
-for d in ldb.all():
-    if 'tags' not in d:
-        print(d)
 location_dict = {d['username']: d['tags'] for d in ldb.all()}
 import collections
 
@@ -339,13 +336,6 @@ def test_app():
     app.run(debug=False, port=12167, host='0.0.0.0')
 
 
-def put_username():
-    for d in db.all():
-        username, reponame = d['full_name'].split('/')
-        d['username'], d['reponame'] = username, reponame
-        db.upsert(d)
-
-
 @raise_with_printed_args
 def render_static_files():
     for filename, page_index, headline_menu, chunked_repos, max_page_num, tags_num in iter_page_data():
@@ -359,8 +349,6 @@ def render_static_files():
 
 
 if __name__ == "__main__":
-
-    # put_username()
     # usernames = load_from_txt('current_users.txt')
     # mention_users_in_issue(usernames)
     # gen_current_users()

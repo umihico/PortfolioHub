@@ -4,19 +4,22 @@ import pprint
 import time
 import datetime
 import tinydb
-from common import que, hash_username
+from common import hash_username
 from no_thanks import no_thanks
 
 
 def _created_range_iter():
+    month_list = [
+        (1, 4, 0),
+        (4, 7, 0),
+        (7, 10, 0),
+        (10, 1, 1),
+    ]
     for year in range(2014, 9999):
-        for month in [1, 4, 7, 10]:
-            today = datetime.date.today()
-            if datetime.datetime(year, month, 1) > datetime.datetime(today.year, today.month, today.day):
+        for start_month, end_month, yaer_adj in month_list:
+            if datetime.date(year, start_month, 1) > datetime.date.today():
                 raise StopIteration
-            end_year = year if month != 10 else year + 1
-            end_month = month + 3 if month != 10 else 1
-            created_range = f"created:{year}-{str(month).zfill(2)}-01..{end_year}-{str(end_month).zfill(2)}-01"
+            created_range = f"created:{year}-{str(start_month).zfill(2)}-01..{year + yaer_adj}-{str(end_month).zfill(2)}-01"
             yield created_range
 
 
@@ -58,9 +61,10 @@ def _json_iter(topic="portfolio-website"):
             except Exception as e:
                 pprint.pprint(json)
                 raise
+            print(total_count, i, bool((i) * 100 >= total_count))
 
             yield json
-            if i > total_count // 100:
+            if i * 100 >= total_count:
                 break
 
 
