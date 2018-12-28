@@ -13,13 +13,17 @@ from star import star_repo
 import datetime
 import os
 
+DELETE_IF_MISSING_THIS_TIMES = 10
+
 
 def del_if_too_old(repo):
-    disappear_days = (int(time.time()) -
-                      repo['last_found_date']) // (60 * 60 * 24)
-    if disappear_days > 7:
+    missing_times = repo.get('missing_times', 0)
+    missing_times += 1
+    if missing_times == DELETE_IF_MISSING_THIS_TIMES:
         print('del', disappear_days, 'days', repo['full_name'],)
         del db[db.gen_key(repo)]
+    else:
+        repo['missing_times'] = missing_times
 
 
 def update_last_found_date(repo):
@@ -98,14 +102,16 @@ def can_update_repo(repo):
 
 
 def zip_longest_db_rawdb():
-    rawdb_dict = {raw_repos['full_name']: raw_repos for raw_repos in rawdb.all()}
-    db_dict = {repos['full_name']: repos for repos in db.all()}
-    full_names = list(set([*rawdb_dict.keys(), *db_dict.keys()]))
-    new_names = set(full_names) - set(db_dict.keys())
-    old_names = set(full_names) - set(rawdb_dict.keys())
-    print("NEW", len(new_names), 'OLD', len(old_names))
-    for full_name in tqdm.tqdm(full_names):
-        yield db_dict.get(full_name),  rawdb_dict.get(full_name)
+    rawdb_dict = {raw_repos['html_url']: raw_repos for raw_repos in rawdb.all()}
+    db_dict = {repos['html_url']: repos for repos in db.all()}
+    html_urls = list(set([*rawdb_dict.keys(), *db_dict.keys()]))
+    new_urls = set(html_urls) - set(db_dict.keys())
+    old_urls = set(html_urls) - set(rawdb_dict.keys())
+    will_deleting_cnt = len([t for t in [db.get({'html_url': html_url}).get('missing_times', 0)
+                                         for html_url in old_urls] if t >= DELETE_IF_MISSING_THIS_TIMES - 1])
+    print("NEW", len(new_urls), 'OLD', will_deleting_cnt)
+    for html_url in tqdm.tqdm(html_urls):
+        yield db_dict.get(html_url),  rawdb_dict.get(html_url)
 
 
 if __name__ == '__main__':
