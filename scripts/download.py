@@ -26,15 +26,8 @@ def del_if_too_old(repo):
         repo['missing_times'] = missing_times
 
 
-def update_last_found_date(repo):
-    repo['last_found_date'] = int(time.time())
-    db.upsert(repo)
-
-
 def daily_update():
     for repo, raw_repo in zip_longest_db_rawdb():
-        if raw_repo and repo:
-            update_last_found_date(repo)
         if raw_repo and raw_repo['stargazers_count'] == 0:
             star_repo(raw_repo['full_name'])
         if repo is None:
@@ -89,7 +82,6 @@ def update_repo(repo):
         gif_success = False
     repo['gif_success'] = gif_success
     repo['db_updated_at'] = time.time()
-    update_last_found_date(repo)
     db.upsert(repo)
 
 #
