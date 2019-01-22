@@ -1,6 +1,6 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
-html_dir = 'html/'
+html_dir = '../../thumbnailed-portfolio-websites-gh-pages/'
 from flask import Markup
 from microdb import MicroDB
 import collections
@@ -30,6 +30,8 @@ for d in mdb_repos.all():
     gif_json = mdb_gifs.get({'full_name': d['full_name']})
     geotag_json = mdb_geotags.get({'username': d['username']})
     d['gif_path'] = gif_json['filepath']
+    if d['gif_path']:
+        d['gif_path'] = d['gif_path'].replace(html_dir, '/')
     d['gif_success'] = gif_json['success']
     d['geotags'] = geotag_json['geotags']
     d['homepage_exist'] = bool(d['homepage'])
@@ -236,7 +238,7 @@ def build_static_files():
     freezer = Freezer(app)
     app.config['FREEZER_RELATIVE_URLS'] = False
     app.config['FREEZER_DESTINATION'] = html_dir
-    app.config['FREEZER_DESTINATION_IGNORE'] = ["gifs", '*.json']
+    app.config['FREEZER_DESTINATION_IGNORE'] = ["gifs", '.git']
 
     @freezer.register_generator
     def product_url_generator():
