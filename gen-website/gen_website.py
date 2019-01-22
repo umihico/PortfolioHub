@@ -1,10 +1,40 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
-from common import html_dir,  chunks, gen_filename, numberize_int,  raise_with_printed_args, save_as_txt, load_from_txt
-from dbs import rawdb, db, ldb
+html_dir = 'html/'
 from flask import Markup
-location_dict = {d['username']: d['tags'] for d in ldb.all()}
+from microdb import MicroDB
 import collections
+import re as re
+
+
+def chunks(list_, chunk_len):
+    '''
+    chunks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], 3)
+    >> [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9]]
+    '''
+    return list(list_[i:i + chunk_len] for i in range(0, len(list_), chunk_len))
+
+
+def numberize(string):
+    return int(re.sub(r'\D', '', string))
+
+
+mdb_repos = MicroDB('../listup-repo/repos.json', partition_keys=['full_name', ])
+print('mdb_repos', len(mdb_repos))
+mdb_geotags = MicroDB('../attach-geotag/geotag.json', partition_keys=['username', ])
+print('mdb_geotags', len(mdb_geotags))
+mdb_gifs = MicroDB('../scrap-repo/gifs.json', partition_keys=['full_name', ])
+print('mdb_gifs', len(mdb_gifs))
+merged_db = []
+for d in mdb_repos.all():
+    gif_json = mdb_gifs.get({'full_name': d['full_name']})
+    geotag_json = mdb_geotags.get({'username': d['username']})
+    d['gif_path'] = gif_json['filepath']
+    d['gif_success'] = gif_json['success']
+    d['geotags'] = geotag_json['geotags']
+    d['homepage_exist'] = bool(d['homepage'])
+    merged_db.append(d)
+
 
 app = Flask(__name__)
 
@@ -24,9 +54,9 @@ def css_write():
 
 def gen_tags():
     chained_location_tags = []
-    for d in db.all():
-        if location_dict.get(d['username'], list()) and d['gif_success'] and d['homepage_exist']:
-            chained_location_tags.extend(location_dict[d['username']])
+    for d in merged_db:
+        if d['geotags'] and d['gif_success'] and d['homepage_exist']:
+            chained_location_tags.extend(d['geotags'])
     counted_tagdict = collections.Counter(chained_location_tags)
     # Counter({'a': 4, 'c': 2, 'b': 1})
     tags_counts = sorted(list(counted_tagdict.items()),
@@ -66,8 +96,8 @@ def top():
 def alluser():
     non_grid_rows = []
     non_grid_rows.append([(x, False, x) for x in ['name', 'repository', 'star', 'fork',
-                                                  'website', 'valid url', 'gif success', 'updated_at', 'gif', 'locations']])
-    db_sorted_list = sorted(list(db.all()), key=lambda d: (
+                                                  'website', 'valid url', 'gif success', 'pushed_at', 'gif', 'locations']])
+    db_sorted_list = sorted(list(merged_db), key=lambda d: (
         d['gif_success'], d['stargazers_count'], d['forks']), reverse=True)
     for d in db_sorted_list:
         full_name = d['full_name']
@@ -78,14 +108,13 @@ def alluser():
         homepage = d['homepage']
         homepage_exist = d['homepage_exist']
         gif_success = d.get('gif_success', 'not tried')
-        updated_at = d['updated_at'][:10]
-        locations = ','.join(
-            location_dict.get(d['username'], []))
+        pushed_at = d['pushed_at'][:10]
+        locations = ','.join(d['geotags'])
         locations = locations if locations else 'None'
-        gif_url = gen_filename(d['full_name'])
+        gif_url = d['gif_path']
         tr = []
         for x in [name, repourl, star, forks, homepage,
-                  homepage_exist, gif_success, updated_at, gif_url, locations]:
+                  homepage_exist, gif_success, pushed_at, gif_url, locations]:
             value = 'website' if x == homepage else 'gif' if x == gif_url else 'repository' if x == repourl else x
             href_bool = bool(value in ['website', 'gif', 'repository'])
             if x == homepage and x is None:
@@ -149,12 +178,11 @@ def purpose():
         non_grid_rows=non_grid_rows)
 
 
-@raise_with_printed_args
 def gen_pagenation_bar(path, max_page_num):
     if path == 'locations.html':
         return []
     # path="most_stars0001.html"
-    current_page = numberize_int(path)
+    current_page = numberize(path)
     filename = path.replace(str(current_page).zfill(4) + ".html", "")
     page_nums = gen_page_nums(current_page, max_page_num)
     pagenation_bar = [(num, gen_html_filename(filename, num), not bool(
@@ -162,7 +190,6 @@ def gen_pagenation_bar(path, max_page_num):
     return pagenation_bar
 
 
-@raise_with_printed_args
 def gen_page_nums(current_page, max_page_num):
     middle_page_num = current_page if bool(
         3 <= current_page <= max_page_num - 2) else 3 if current_page < 3 else max_page_num - 2
@@ -204,7 +231,6 @@ def test_gen_pagenation_bar():
         print(gen_pagenation_bar(path, test_num[1]))
 
 
-@raise_with_printed_args
 def build_static_files():
     paths = render_static_files()
     freezer = Freezer(app)
@@ -237,7 +263,6 @@ def mention_users_in_issue(usernames):
         print()
 
 
-@raise_with_printed_args
 def iter_page_data():
     """
     *in templete.html*
@@ -245,19 +270,19 @@ def iter_page_data():
         for filename, tubled_inforows in tr_repost:
             for string,url ,do_herfin tubled_inforow:
     """
-    all_repo = db.all()
+    all_repo = merged_db
     all_repo = [
         r for r in all_repo if 'homepage_exist' in r and r['homepage_exist'] and r['gif_success']]
     sortkey_dict = {'most_stars': "stargazers_count",
                     'most_forks': "forks",
-                    'recently_updated': "updated_at", }
+                    'recently_updated': "pushed_at", }
     for filename, headline_menu in iter_headline():
         sortkey = sortkey_dict[filename]
         all_repo.sort(key=lambda repo: repo[sortkey], reverse=True)
         yield from yield_page_data(filename, headline_menu, all_repo)
 
-    user_tags_dict = {d['username'].lower(): location_dict[d['username']]
-                      for d in db.all() if d['username'] in location_dict}
+    user_tags_dict = {d['username'].lower(): d['geotags']
+                      for d in merged_db if d['geotags']}
     # print(user_tags_dict.keys())
     tag_users_dict = {}
     for username, tags in user_tags_dict.items():
@@ -306,16 +331,15 @@ def to_tubled_inforow(repo):
     tubled_inforow.append(
         (f"{repo['forks']} forks", repo['html_url'] + '/network/members', True))
     tubled_inforow.append(
-        ("updated:" + str(repo['updated_at'])[:10], '', False))
-    gif_filename = gen_filename(repo['full_name'])
-    location_tags = location_dict[repo['username']
-                                  ] if repo['username'] in location_dict else list()
+        ("updated:" + str(repo['pushed_at'])[:10], '', False))
+    gif_filename = repo['gif_path']
+    location_tags = repo['geotags']
     td = [gif_filename, tubled_inforow, location_tags]
     return td
 
 
 def iter_headline():
-    # {"full_name":"itsdpm\/itsdpm.github.io","html_url":"https:\/\/github.com\/itsdpm\/itsdpm.github.io","description":"Website hosted at -- ","created_at":"2017-12-10T10:48:16Z","updated_at":"2017-12-10T13:39:21Z","size":1,"stargazers_count":0,"watchers_count":0,"forks":0,"watchers":0,"score":4.102341,"gif_success":true}
+    # {"full_name":"itsdpm\/itsdpm.github.io","html_url":"https:\/\/github.com\/itsdpm\/itsdpm.github.io","description":"Website hosted at -- ","created_at":"2017-12-10T10:48:16Z","pushed_at":"2017-12-10T13:39:21Z","size":1,"stargazers_count":0,"watchers_count":0,"forks":0,"watchers":0,"score":4.102341,"gif_success":true}
     for iter_key, url in headline_menus_strings_keys:
         headline_menu = [(url + '0001.html', key, bool(key == iter_key))
                          for key, url in headline_menus_strings_keys]
@@ -336,7 +360,6 @@ def test_app():
     app.run(debug=False, port=12167, host='0.0.0.0')
 
 
-@raise_with_printed_args
 def render_static_files():
     for filename, page_index, headline_menu, chunked_repos, max_page_num, tags_num in iter_page_data():
         print("calculating", filename, page_index)

@@ -1,27 +1,9 @@
-import requests
-import time
 import datetime
 from is_no_thanks_user import is_no_thanks_user
-from ppickle import load
 from microdb import MicroDB
-
-
-last_http_time = 0
-OAUTH_TOKEN = load("OAUTH_TOKEN.json")["OAUTH_TOKEN"]
-
-
-def retryable_authorized_http_requests(url):
-    global last_http_time, OAUTH_TOKEN
-    headers = {"Authorization": f"token {OAUTH_TOKEN}", }
-    for i in range(10):
-        time.sleep(max([last_http_time-time.time()+2, 0]))
-        print('GET', url)
-        response = requests.get(url, headers=headers)
-        last_http_time = time.time()
-        if 'message' not in response.json():
-            return response
-        else:
-            print(response.json())
+import sys
+sys.path.append("..")
+from common_api_httpget import retryable_authorized_http_requests
 
 
 def get_repos(url):
@@ -79,6 +61,9 @@ def trim_repos(all_repos):
         valid_keys = ['username', 'reponame', "html_url", 'stargazers_count',
                       'homepage', 'forks', 'full_name', 'created_at', 'pushed_at']
         repo = {k: v for k, v in repo.items() if k in valid_keys}
+        for key in valid_keys:
+            if key not in repo:
+                print(repo)
         return repo
     all_repos = [trim_repo(repo) for repo in all_repos]
     return all_repos
