@@ -77,7 +77,7 @@ def trim_repos(all_repos):
         if not repo['homepage'] and username == reponame.replace(".github.io", ''):
             repo['homepage'] = "https://" + reponame
         valid_keys = ['username', 'reponame', "html_url", 'stargazers_count',
-                      'homepage', 'forks', 'full_name', 'created_at', 'updated_at']
+                      'homepage', 'forks', 'full_name', 'created_at', 'pushed_at']
         repo = {k: v for k, v in repo.items() if k in valid_keys}
         return repo
     all_repos = [trim_repo(repo) for repo in all_repos]
