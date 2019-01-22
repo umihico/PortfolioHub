@@ -127,7 +127,7 @@ def url_to_gif_locally(url, filename):
 
 def gen_filename(repo):
     full_name = repo['full_name']
-    return '../gifs/' + full_name.replace('/', '-').lower() + '.gif'
+    return '../../thumbnailed-portfolio-websites-gh-pages/gifs/' + full_name.replace('/', '-').lower() + '.gif'
 
 
 def gen_gif_json(last_try, scrapped_at, full_name, success, filepath,):

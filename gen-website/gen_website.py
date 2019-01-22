@@ -31,7 +31,7 @@ for d in mdb_repos.all():
     geotag_json = mdb_geotags.get({'username': d['username']})
     d['gif_path'] = gif_json['filepath']
     if d['gif_path']:
-        d['gif_path'] = d['gif_path'].replace(html_dir, '/')
+        d['gif_path'] = d['gif_path'].replace(html_dir, '/thumbnailed-portfolio-websites/')
     d['gif_success'] = gif_json['success']
     d['geotags'] = geotag_json['geotags']
     d['homepage_exist'] = bool(d['homepage'])
