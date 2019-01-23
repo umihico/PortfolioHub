@@ -9,6 +9,7 @@ from tqdm import tqdm
 import time
 import sys
 from multiprocessing.pool import ThreadPool
+import os
 
 
 def gen_chrome_options():
@@ -153,13 +154,18 @@ def update(mdb_gifs, repo):
 
 def exact_update_required(mdb_repos, mdb_gifs):
     def is_update_required(repo):
+
         if not repo['homepage']:
             return False
         if repo not in mdb_gifs:
             return True
         gif_json = mdb_gifs.get(repo)
-        if not gif_json['success']:
-            return True
+        """optional"""
+        # if not gif_json['success']:
+        #     return True
+        # if not os.path.exists(gif_json['filepath']):
+        #     return True
+        """optional end """
         if time.time() < gif_json['last_try']+3*60*60*24:
             return False
         if repo['pushed_at'] == gif_json['scrapped_at']:
