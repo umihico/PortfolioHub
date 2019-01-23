@@ -1,14 +1,10 @@
 
-from geotag_dicts import convert_dict_usa_states, list_of_largest_cities
+from conv_support_dict import convert_dict_usa_states, list_of_largest_cities
 import re
 letters_space_only = re.compile('[a-zA-Z ]')
-letters_only = re.compile('[a-zA-Z]')
-from common import raise_with_printed_args
-import tqdm
 
 
-@raise_with_printed_args
-def geotag(raw_location_string):
+def calc_geotag(raw_location_string):
     if not raw_location_string:
         return []
     if not [x for x in raw_location_string if x]:
@@ -52,7 +48,3 @@ add_country_dict = {
 for dict_ in [convert_dict, add_country_dict]:
     for key, value in list(dict_.items()):
         dict_[beautify_word(key)] = beautify_word(value)
-
-
-if __name__ == '__main__':
-    modify_raw_geotag_db()
