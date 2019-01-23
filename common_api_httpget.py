@@ -2,7 +2,7 @@ import requests
 from ppickle import load
 import time
 last_http_time = 0
-OAUTH_TOKEN = load("../OAUTH_TOKEN.json")["OAUTH_TOKEN"]
+OAUTH_TOKEN = load("../token.json")["OAUTH_TOKEN"]
 
 
 def retryable_authorized_http_requests(url):
