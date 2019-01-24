@@ -3,11 +3,11 @@ from ppickle import load
 import time
 last_http_time = 0
 OAUTH_TOKEN = load("../token.json")["OAUTH_TOKEN"]
+headers = {"Authorization": f"token {OAUTH_TOKEN}", }
 
 
 def retryable_authorized_http_requests(url):
-    global last_http_time, OAUTH_TOKEN
-    headers = {"Authorization": f"token {OAUTH_TOKEN}", }
+    global last_http_time, headers
     for i in range(10):
         time.sleep(max([last_http_time-time.time()+2, 0]))
         print('GET', url)

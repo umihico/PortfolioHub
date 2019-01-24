@@ -28,12 +28,17 @@ print('mdb_gifs', len(mdb_gifs))
 merged_db = []
 for d in mdb_repos.all():
     gif_json = mdb_gifs.get({'full_name': d['full_name']})
-    geotag_json = mdb_geotags.get({'username': d['username']})
+    geotag_json = mdb_geotags.get({'username': d['username']}, mdb_geotags.get({
+                                  'username': d['username'].lower()}))
     d['gif_path'] = gif_json['filepath']
     if d['gif_path']:
         d['gif_path'] = d['gif_path'].replace(html_dir, '/thumbnailed-portfolio-websites/')
     d['gif_success'] = gif_json['success']
-    d['geotags'] = geotag_json['geotags']
+    try:
+        d['geotags'] = geotag_json['geotags']
+    except Exception as e:
+        print(d, geotag_json)
+        raise
     d['homepage_exist'] = bool(d['homepage'])
     merged_db.append(d)
 
