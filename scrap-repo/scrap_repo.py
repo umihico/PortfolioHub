@@ -79,6 +79,11 @@ def raw_pngs_to_gif(pngs, filename):
     if gif_success:
         images[0].save(filename, save_all=True,
                        append_images=images[1:], duration=600, loop=100, quality=30, optimize=True)
+        try:
+            Image.open(filename)
+        except Exception as e:
+            os.remove(filename)
+            gif_success = False
     return gif_success
 
 
@@ -163,8 +168,8 @@ def exact_update_required(mdb_repos, mdb_gifs):
         """optional"""
         # if not gif_json['success']:
         #     return True
-        # if not os.path.exists(gif_json['filepath']):
-        #     return True
+        if gif_json['success'] and not os.path.exists(gif_json['filepath']):
+            return True
         """optional end """
         if time.time() < gif_json['last_try']+3*60*60*24:
             return False
@@ -204,7 +209,19 @@ def scrap_repos():
             pass
 
 
+def del_invalid_gifs():
+    gif_dir_path = "../../thumbnailed-portfolio-websites-gh-pages/gifs/"
+    for gif_filename in os.listdir(gif_dir_path):
+        gif_path = "../../thumbnailed-portfolio-websites-gh-pages/gifs/"+gif_filename
+        try:
+            Image.open(gif_path)
+        except Exception as e:
+            print(gif_path)
+            os.remove(gif_path)
+
+
 if __name__ == '__main__':
+    # del_invalid_gifs()
     scrap_repos()
     # url_to_gif("https://shawnblakesley.github.io/",
     #            filename="/home/umihico/git-powered-philosophy/worktree-draft/site/test.gif")
