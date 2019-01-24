@@ -2,7 +2,7 @@ import sys
 import time
 from tqdm import tqdm
 sys.path.append("..")
-from common_api_httpget import retryable_authorized_http_requests
+from common import retryable_authorized_http_requests, jsons_dir
 from microdb import MicroDB
 from calc_geotag import calc_geotag
 
@@ -49,9 +49,8 @@ def sort_by_priotity(mdb_repos, mdb_geotag):
 
 
 def attach_all_geotag(count=100):
-    mdb_repos = MicroDB('../listup-repo/repos.json', partition_keys=['username', ])
-    mdb_repos.get({'username': "'AidanFray"})
-    mdb_geotag = MicroDB('geotag.json', partition_keys=['username', ])
+    mdb_repos = MicroDB(jsons_dir+'repos.json', partition_keys=['username', ])
+    mdb_geotag = MicroDB(jsons_dir+'geotag.json', partition_keys=['username', ])
     sorted_usernames_by_priotity = sort_by_priotity(mdb_repos, mdb_geotag)
     for username in tqdm(sorted_usernames_by_priotity[:count]):
         update(username, mdb_geotag)

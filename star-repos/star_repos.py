@@ -1,7 +1,7 @@
 
 import sys
 sys.path.append('..')
-from common_api_httpget import headers
+from common import headers, jsons_dir
 from microdb import MicroDB
 import requests
 from tqdm import tqdm
@@ -25,8 +25,8 @@ def star_one_repo(repo):
 # def test_star_one_repo():
 
 def exact_yet_stared_succeed_repos():
-    mdb_repos = MicroDB('../listup-repo/repos.json', partition_keys=['full_name', ])
-    mdb_gifs = MicroDB('../scrap-repo/gifs.json', partition_keys=['full_name', ])
+    mdb_repos = MicroDB(jsons_dir+'repos.json', partition_keys=['full_name', ])
+    mdb_gifs = MicroDB(jsons_dir+'gifs.json', partition_keys=['full_name', ])
     yet_stared_succeed_repos = []
     for d in mdb_repos.all():
         gifjson = mdb_gifs.get(d)

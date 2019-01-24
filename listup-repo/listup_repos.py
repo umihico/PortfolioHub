@@ -3,7 +3,7 @@ from is_no_thanks_user import is_no_thanks_user
 from microdb import MicroDB
 import sys
 sys.path.append("..")
-from common_api_httpget import retryable_authorized_http_requests
+from common import retryable_authorized_http_requests, jsons_dir, topic
 
 
 def get_repos(url):
@@ -14,7 +14,7 @@ def get_repos(url):
     return repo_list
 
 
-def iter_season_url(topic):
+def iter_season_url():
     for start_year in range(2014, 9999):
         for start_month in [1, 4, 7, 10]:
             if datetime.date(start_year, start_month, 1) > datetime.date.today():
@@ -37,9 +37,9 @@ def iter_page(season_query_url):
         yield final_query_url
 
 
-def get_all_repos(topic):
+def get_all_repos():
     all_repos = []
-    for season_query_url in iter_season_url(topic):
+    for season_query_url in iter_season_url():
         for final_query_url in iter_page(season_query_url):
             repos = get_repos(final_query_url)
             if repos:
@@ -79,15 +79,15 @@ def exclude_no_thanks(repos):
     return new_repos
 
 
-def save_all_repos(topic):
-    all_repos = get_all_repos(topic)
+def save_all_repos():
+    all_repos = get_all_repos()
     all_repos = trim_repos(all_repos)
     all_repos = exclude_no_thanks(all_repos)
-    mdb = MicroDB('repos.json', partition_keys=['full_name', ])
+    mdb = MicroDB(jsons_dir+'repos.json', partition_keys=['full_name', ])
     for repo in all_repos:
         mdb.upsert(dictionary=repo)
     mdb.save()
 
 
 if __name__ == '__main__':
-    save_all_repos(topic="portfolio-website")
+    save_all_repos()

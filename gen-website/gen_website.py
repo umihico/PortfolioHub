@@ -1,6 +1,8 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
-html_dir = '../../thumbnailed-portfolio-websites-gh-pages/'
+import sys
+sys.path.append("..")
+from common import htmls_root_dir, jsons_dir
 from flask import Markup
 from microdb import MicroDB
 import collections
@@ -19,11 +21,11 @@ def numberize(string):
     return int(re.sub(r'\D', '', string))
 
 
-mdb_repos = MicroDB('../listup-repo/repos.json', partition_keys=['full_name', ])
+mdb_repos = MicroDB(jsons_dir+'repos.json', partition_keys=['full_name', ])
 print('mdb_repos', len(mdb_repos))
-mdb_geotags = MicroDB('../attach-geotag/geotag.json', partition_keys=['username', ])
+mdb_geotags = MicroDB(jsons_dir+'geotag.json', partition_keys=['username', ])
 print('mdb_geotags', len(mdb_geotags))
-mdb_gifs = MicroDB('../scrap-repo/gifs.json', partition_keys=['full_name', ])
+mdb_gifs = MicroDB(jsons_dir+'gifs.json', partition_keys=['full_name', ])
 print('mdb_gifs', len(mdb_gifs))
 merged_db = []
 for d in mdb_repos.all():
@@ -32,7 +34,7 @@ for d in mdb_repos.all():
                                   'username': d['username'].lower()}))
     d['gif_path'] = gif_json['filepath']
     if d['gif_path']:
-        d['gif_path'] = d['gif_path'].replace(html_dir, '/thumbnailed-portfolio-websites/')
+        d['gif_path'] = d['gif_path'].replace(htmls_root_dir, '/thumbnailed-portfolio-websites/')
     d['gif_success'] = gif_json['success']
     try:
         d['geotags'] = geotag_json['geotags']
@@ -55,7 +57,7 @@ deactivated_headline = [(url + '0001.html', key, False)
 
 def css_write():
     with open('templates/css.css', mode='r') as r:
-        with open(html_dir + 'css.css', mode='w') as w:
+        with open(htmls_root_dir + 'css.css', mode='w') as w:
             w.write(r.read())
 
 
@@ -242,8 +244,8 @@ def build_static_files():
     paths = render_static_files()
     freezer = Freezer(app)
     app.config['FREEZER_RELATIVE_URLS'] = False
-    app.config['FREEZER_DESTINATION'] = html_dir
-    app.config['FREEZER_DESTINATION_IGNORE'] = ["gifs", '.git']
+    app.config['FREEZER_DESTINATION'] = htmls_root_dir
+    app.config['FREEZER_DESTINATION_IGNORE'] = ["jsons", "gifs", '.git']
 
     @freezer.register_generator
     def product_url_generator():

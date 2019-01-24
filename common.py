@@ -17,3 +17,20 @@ def retryable_authorized_http_requests(url):
             return response
         else:
             print(response.json())
+
+
+from subprocess import check_output
+current_branch_name = check_output(
+    "git symbolic-ref --short HEAD".split(" ")).decode().split('\n')[0]
+
+topic = "portfolio-website"
+if current_branch_name == 'personal-website':
+    topic = 'personal-website'
+
+
+htmls_root_dir = "../../thumbnailed-portfolio-websites-gh-pages/"
+if current_branch_name == 'personal-website':
+    htmls_root_dir = "../../thumbnailed-personal-websites-gh-pages/"
+
+jsons_dir = htmls_root_dir+'jsons/'
+gifs_dir = htmls_root_dir+'gifs/'

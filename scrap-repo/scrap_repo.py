@@ -8,6 +8,8 @@ from microdb import MicroDB
 from tqdm import tqdm
 import time
 import sys
+sys.path.append("..")
+from common import jsons_dir, gifs_dir
 from multiprocessing.pool import ThreadPool
 import os
 
@@ -133,7 +135,7 @@ def url_to_gif_locally(url, filename):
 
 def gen_filename(repo):
     full_name = repo['full_name']
-    return '../../thumbnailed-portfolio-websites-gh-pages/gifs/' + full_name.replace('/', '-').lower() + '.gif'
+    return gifs_dir + full_name.replace('/', '-').lower() + '.gif'
 
 
 def gen_gif_json(last_try, scrapped_at, full_name, success, filepath,):
@@ -200,8 +202,8 @@ def update_mutlitherading_wrapper(args):
 
 
 def scrap_repos():
-    mdb_repos = MicroDB('../listup-repo/repos.json', partition_keys=['full_name', ])
-    mdb_gifs = MicroDB('gifs.json', partition_keys=['full_name', ])
+    mdb_repos = MicroDB(jsons_dir+'repos.json', partition_keys=['full_name', ])
+    mdb_gifs = MicroDB(jsons_dir+'gifs.json', partition_keys=['full_name', ])
     update_required_repos = exact_update_required(mdb_repos, mdb_gifs)
     args_iterable = [(mdb_gifs, repo) for repo in update_required_repos]
     with ThreadPool(processes=20) as pool:
@@ -210,9 +212,8 @@ def scrap_repos():
 
 
 def del_invalid_gifs():
-    gif_dir_path = "../../thumbnailed-portfolio-websites-gh-pages/gifs/"
-    for gif_filename in os.listdir(gif_dir_path):
-        gif_path = "../../thumbnailed-portfolio-websites-gh-pages/gifs/"+gif_filename
+    for gif_filename in os.listdir(gifs_dir):
+        gif_path = gifs_dir+gif_filename
         try:
             Image.open(gif_path)
         except Exception as e:
