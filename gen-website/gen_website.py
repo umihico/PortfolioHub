@@ -38,7 +38,7 @@ for d in mdb_repos.all():
                                   'username': d['username'].lower()}))
     d['gif_path'] = gif_json['filepath']
     if d['gif_path']:
-        d['gif_path'] = d['gif_path'].replace(htmls_root_dir, '/thumbnailed-portfolio-websites/')
+        d['gif_path'] = d['gif_path'].replace(htmls_root_dir, f'/thumbnailed-{topic}s/')
     d['gif_success'] = gif_json['success']
     try:
         d['geotags'] = geotag_json['geotags']
