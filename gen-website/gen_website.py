@@ -2,7 +2,11 @@ from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
 import sys
 sys.path.append("..")
-from common import htmls_root_dir, jsons_dir
+from common import htmls_root_dir, jsons_dir, topic
+sister_website_name = {
+    'personal-website': "thumbnailed-portfolio-websites",
+    'portfolio-website': "thumbnailed-personal-websites",
+}[topic]
 from flask import Markup
 from microdb import MicroDB
 import collections
@@ -76,6 +80,19 @@ def gen_tags():
 tags_info = gen_tags()
 
 
+def render_template_wrapper(headline_menu, repos, pagenation_bar, optional_content=None, tags_num=30):
+    return render_template(
+        'templete.html',
+        topic=topic,
+        sister_website_name=sister_website_name,
+        tags_info=tags_info,
+        tags_num=tags_num,
+        headline_menu=headline_menu,
+        repos=repos,
+        pagenation_bar=pagenation_bar,
+        optional_content=optional_content)
+
+
 @app.route('/<path>/')
 def index(path):
     if path == 'favicon.ico':
@@ -86,15 +103,12 @@ def index(path):
         return purpose()
     headline_menu, chunked_repos, max_page_num, tags_num = path_data_dict[path]
     pagenation_bar = gen_pagenation_bar(path, max_page_num)
-    return render_template(
-        'templete.html',
-        tags_info=tags_info,
-        tags_num=tags_num,
-        headline_menu=headline_menu,
-        repos=chunked_repos,
-        pagenation_bar=pagenation_bar,
-        grid=True,
-        non_grid_rows=None)
+    return render_template_wrapper(
+        headline_menu,
+        chunked_repos,
+        pagenation_bar,
+        tags_num=tags_num
+    )
 
 
 @app.route('/')
@@ -103,9 +117,9 @@ def top():
 
 
 def alluser():
-    non_grid_rows = []
-    non_grid_rows.append([(x, False, x) for x in ['name', 'repository', 'star', 'fork',
-                                                  'website', 'valid url', 'gif success', 'pushed_at', 'gif', 'locations']])
+    optional_content = []
+    optional_content.append([(x, False, x) for x in ['name', 'repository', 'star', 'fork',
+                                                     'website', 'valid url', 'gif success', 'pushed_at', 'gif', 'locations']])
     db_sorted_list = sorted(list(merged_db), key=lambda d: (
         d['gif_success'], d['stargazers_count'], d['forks']), reverse=True)
     for d in db_sorted_list:
@@ -129,17 +143,17 @@ def alluser():
             if x == homepage and x is None:
                 href_bool = False
             tr.append((value, href_bool, x))
-        non_grid_rows.append(tr)
-    for tr in non_grid_rows:
+        optional_content.append(tr)
+    for tr in optional_content:
         # print(tr)
         for value, do_href, url in tr:
             pass
-    # print(non_grid_rows[0][2][0])
-    # non_grid_rows.sort(
+    # print(optional_content[0][2][0])
+    # optional_content.sort(
     #     key=lambda x: 999999 if x[2][0] == 'star' else x[2][0], reverse=True)
 
     trs = []
-    for tr in non_grid_rows:
+    for tr in optional_content:
         herf_srcs = []
         for value, do_href, url in tr:
             herf_src = f'<a href="{url}">{value}</a>' if do_href else str(
@@ -150,16 +164,8 @@ def alluser():
         trs.append(tr_raw_src)
     trs_raw_src = '<tr>' + '</tr><tr>'.join(trs) + "</tr>"
     raw_src = f'''<table border="1"><h3>if you didn't find yourself, or error with unknown reason, feel free to create issue.</h3>{trs_raw_src}</table>'''
-    non_grid_rows = Markup(raw_src)
-    return render_template(
-        'templete.html',
-        tags_info=tags_info,
-        tags_num=30,
-        headline_menu=deactivated_headline,
-        repos=[],
-        pagenation_bar=list(),
-        grid=False,
-        non_grid_rows=non_grid_rows)
+    optional_content = Markup(raw_src)
+    return render_template_wrapper(deactivated_headline, list(), list(), optional_content=optional_content)
 
 
 def purpose():
@@ -175,16 +181,8 @@ def purpose():
     raw_src = "<ul>" + "</ul><ul>".join(purposes) + "</ul>"
     li = '<li style="font-size: 1.3em;">'
     raw_src = li + raw_src + "</li>"
-    non_grid_rows = Markup(raw_src)
-    return render_template(
-        'templete.html',
-        tags_info=tags_info,
-        tags_num=30,
-        headline_menu=deactivated_headline,
-        repos=[],
-        pagenation_bar=list(),
-        grid=False,
-        non_grid_rows=non_grid_rows)
+    optional_content = Markup(raw_src)
+    return render_template_wrapper(deactivated_headline, list(), list(), optional_content=optional_content)
 
 
 def gen_pagenation_bar(path, max_page_num):
@@ -261,15 +259,6 @@ def gen_html_filename(filename, page_index):
         return filename + '.html'
     else:
         return filename + str(page_index).zfill(4) + '.html'
-
-
-def mention_users_in_issue(usernames):
-    for chunked_usernames in chunks(usernames, 50):
-        text = ' '.join(['@' + n for n in chunked_usernames])
-        print(text)
-        print()
-        print()
-        print()
 
 
 def iter_page_data():
@@ -355,20 +344,6 @@ def iter_headline():
         yield url, headline_menu
 
 
-def test_build_static_files():
-    paths = ['/a/', '/b/']
-    build_static_files(paths)
-
-
-def test_app():
-    import os
-    print(app.root_path)
-    app.root_path = os.path.join(os.path.dirname(
-        app.root_path), 'umihico.github.io')
-    print(app.root_path)
-    app.run(debug=False, port=12167, host='0.0.0.0')
-
-
 def render_static_files():
     for filename, page_index, headline_menu, chunked_repos, max_page_num, tags_num in iter_page_data():
         print("calculating", filename, page_index)
@@ -381,11 +356,4 @@ def render_static_files():
 
 
 if __name__ == "__main__":
-    # usernames = load_from_txt('current_users.txt')
-    # mention_users_in_issue(usernames)
-    # gen_current_users()
-    # test_app()
-    # test_build_static_files()
-    # test_gen_pagenation_bar()
     build_static_files()
-    # css_write()

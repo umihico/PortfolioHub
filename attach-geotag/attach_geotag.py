@@ -38,7 +38,7 @@ def sort_by_priotity(mdb_repos, mdb_geotag):
             geotag_json = mdb_geotag.get(repo)
             last_modified = geotag_json['last_modified']
         else:
-            print(username)
+            # print(username)
             last_modified = 0
             geotag_json = {}
         last_modified_time_dict[username] = last_modified
@@ -65,4 +65,4 @@ def attach_all_geotag(count=100):
 
 if __name__ == '__main__':
     # test_username_to_location()
-    attach_all_geotag(20)
+    attach_all_geotag(4000)

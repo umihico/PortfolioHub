@@ -90,11 +90,13 @@ def raw_pngs_to_gif(pngs, filename):
 
 
 def url_to_gif(url, filename):
+    error_place = None
+    gif_success = False
     try:
         requests.get(url, timeout=10).raise_for_status()
     except Exception as e:
-        gif_success = False
-        return gif_success
+        error_place = 'requests.get'
+        return gif_success, error_place
     chrome = Chromeless(awsgateway_url, awsgateway_apikey, chrome_options=chrome_options)
     chrome.attach_method(scrolling_capture)
     chrome.attach_method(scroll_each_iter)
@@ -104,8 +106,12 @@ def url_to_gif(url, filename):
         print(e)
         print('failed', url)
         gif_success = False
-        return gif_success
-    return raw_pngs_to_gif(pngs, filename)
+        error_place = 'chromeless'
+        return gif_success, error_place
+    gif_success = raw_pngs_to_gif(pngs, filename)
+    if not gif_success:
+        gif_success = 'raw_pngs_to_gif'
+    return gif_success, error_place
 
 
 def url_to_gif_locally(url, filename):
@@ -138,13 +144,14 @@ def gen_filename(repo):
     return gifs_dir + full_name.replace('/', '-').lower() + '.gif'
 
 
-def gen_gif_json(last_try, scrapped_at, full_name, success, filepath,):
+def gen_gif_json(last_try, scrapped_at, full_name, success, filepath, error_place):
     gif_json = {
         'last_try': last_try,
         'scrapped_at': scrapped_at,
         'full_name': full_name,
         'success': success,
         'filepath': filepath,
+        'error_place': error_place,
     }
     return gif_json
 
@@ -152,11 +159,12 @@ def gen_gif_json(last_try, scrapped_at, full_name, success, filepath,):
 def update(mdb_gifs, repo):
     filepath = gen_filename(repo)
     url = repo['homepage']
-    gif_success = url_to_gif(url, filepath)
+    gif_success, error_place = url_to_gif(url, filepath)
     gif_json = gen_gif_json(time.time(), repo['pushed_at'],
-                            repo['full_name'], gif_success, filepath)
+                            repo['full_name'], gif_success, filepath, error_place)
     mdb_gifs.upsert(gif_json)
     mdb_gifs.save()
+    return gif_success, error_place
 
 
 def exact_update_required(mdb_repos, mdb_gifs):
@@ -168,10 +176,10 @@ def exact_update_required(mdb_repos, mdb_gifs):
             return True
         gif_json = mdb_gifs.get(repo)
         """optional"""
-        # if not gif_json['success']:
-        #     return True
-        if gif_json['success'] and not os.path.exists(gif_json['filepath']):
+        if not gif_json['success'] and gif_json['error_place'] != 'requests.get':
             return True
+        # if gif_json['success'] and not os.path.exists(gif_json['filepath']):
+        #     return True
         """optional end """
         if time.time() < gif_json['last_try']+3*60*60*24:
             return False
@@ -190,7 +198,9 @@ def exact_update_required(mdb_repos, mdb_gifs):
             full_name = repo['full_name']
             success = current_gif_json.get('success', False)
             filepath = current_gif_json.get('filepath', None)
-            gif_json = gen_gif_json(last_try, scrapped_at, full_name, success, filepath)
+            error_place = current_gif_json.get('filepath', None)
+            gif_json = gen_gif_json(last_try, scrapped_at, full_name,
+                                    success, filepath, error_place)
             mdb_gifs.upsert(gif_json)
     mdb_gifs.save()
     return update_required_repos
@@ -198,6 +208,7 @@ def exact_update_required(mdb_repos, mdb_gifs):
 
 def update_mutlitherading_wrapper(args):
     mdb_gifs, repo = args
+    # time.sleep(1)
     return update(mdb_gifs, repo)
 
 
@@ -206,9 +217,15 @@ def scrap_repos():
     mdb_gifs = MicroDB(jsons_dir+'gifs.json', partition_keys=['full_name', ])
     update_required_repos = exact_update_required(mdb_repos, mdb_gifs)
     args_iterable = [(mdb_gifs, repo) for repo in update_required_repos]
-    with ThreadPool(processes=20) as pool:
-        for _ in tqdm(pool.imap_unordered(update_mutlitherading_wrapper, args_iterable), total=len(update_required_repos)):
-            pass
+    scrap_error_ints = []
+    with ThreadPool(processes=1) as pool:
+        for success_bool, error_place in tqdm(pool.imap_unordered(update_mutlitherading_wrapper, args_iterable), total=len(update_required_repos)):
+            error_int = 1 if error_place == 'chromeless' else 0
+            scrap_error_ints.insert(0, error_int)
+            scrap_error_ints = scrap_error_ints[:10]
+            print(scrap_error_ints, error_place)
+            if len(scrap_error_ints) >= 10 and sum(scrap_error_ints) >= 8:
+                raise Exception('failed too many')
 
 
 def del_invalid_gifs():
