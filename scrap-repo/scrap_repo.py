@@ -175,18 +175,18 @@ def exact_update_required(mdb_repos, mdb_gifs):
         if repo not in mdb_gifs:
             return True
         gif_json = mdb_gifs.get(repo)
-        """optional"""
-        if not gif_json['success'] and gif_json['error_place'] != 'requests.get':
+        if gif_json['success'] and not os.path.exists(gif_json['filepath']):
             return True
-        # if gif_json['success'] and not os.path.exists(gif_json['filepath']):
+        """optional"""
+        # if not gif_json['success'] and gif_json['error_place'] != 'requests.get':
         #     return True
         """optional end """
         if time.time() < gif_json['last_try']+3*60*60*24:
             return False
         if repo['pushed_at'] == gif_json['scrapped_at']:
-            return True
-        else:
             return False
+        else:
+            return True
     update_required_repos = []
     for repo in mdb_repos.all():
         if is_update_required(repo):
@@ -198,7 +198,7 @@ def exact_update_required(mdb_repos, mdb_gifs):
             full_name = repo['full_name']
             success = current_gif_json.get('success', False)
             filepath = current_gif_json.get('filepath', None)
-            error_place = current_gif_json.get('filepath', None)
+            error_place = current_gif_json.get('error_place', None)
             gif_json = gen_gif_json(last_try, scrapped_at, full_name,
                                     success, filepath, error_place)
             mdb_gifs.upsert(gif_json)
@@ -218,17 +218,17 @@ def scrap_repos():
     update_required_repos = exact_update_required(mdb_repos, mdb_gifs)
     args_iterable = [(mdb_gifs, repo) for repo in update_required_repos]
     scrap_error_ints = []
-    with ThreadPool(processes=1) as pool:
+    with ThreadPool(processes=10) as pool:
         for success_bool, error_place in tqdm(pool.imap_unordered(update_mutlitherading_wrapper, args_iterable), total=len(update_required_repos)):
             error_int = 1 if error_place == 'chromeless' else 0
             scrap_error_ints.insert(0, error_int)
             scrap_error_ints = scrap_error_ints[:10]
-            print(scrap_error_ints, error_place)
+            # print(scrap_error_ints, error_place)
             if len(scrap_error_ints) >= 10 and sum(scrap_error_ints) >= 8:
-                raise Exception('failed too many')
+                raise Exception('chromeless failed too many times')
 
 
-def del_invalid_gifs():
+def _del_invalid_gifs():
     for gif_filename in os.listdir(gifs_dir):
         gif_path = gifs_dir+gif_filename
         try:
@@ -238,8 +238,21 @@ def del_invalid_gifs():
             os.remove(gif_path)
 
 
+def replace_filepaths_in_json():
+    mdb_gifs = MicroDB(jsons_dir+'gifs.json', partition_keys=['full_name', ])
+    for d in mdb_gifs.all():
+        # if 'filepath' not in d:
+        try:
+            d['filepath'] = d['filepath'].replace(
+                "thumbnailed-portfolio-websites-gh-pages", "thumbnailed-portfolio-websites")
+            mdb_gifs.upsert(d)
+        except Exception as e:
+            pass
+    mdb_gifs.save()
+
+
 if __name__ == '__main__':
-    # del_invalid_gifs()
+    # replace_filepaths_in_json()
     scrap_repos()
     # url_to_gif("https://shawnblakesley.github.io/",
     #            filename="/home/umihico/git-powered-philosophy/worktree-draft/site/test.gif")

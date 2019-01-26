@@ -65,4 +65,4 @@ def attach_all_geotag(count=100):
 
 if __name__ == '__main__':
     # test_username_to_location()
-    attach_all_geotag(4000)
+    attach_all_geotag(100)

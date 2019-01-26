@@ -28,9 +28,9 @@ if current_branch_name == 'personal-website':
     topic = 'personal-website'
 
 
-htmls_root_dir = "../../thumbnailed-portfolio-websites-gh-pages/"
+htmls_root_dir = "../../thumbnailed-portfolio-websites/"
 if current_branch_name == 'personal-website':
-    htmls_root_dir = "../../thumbnailed-personal-websites-gh-pages/"
+    htmls_root_dir = "../../thumbnailed-personal-websites/"
 
 jsons_dir = htmls_root_dir+'jsons/'
 gifs_dir = htmls_root_dir+'gifs/'

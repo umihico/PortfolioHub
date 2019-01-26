@@ -15,7 +15,8 @@ def get_repos(url):
 
 
 def iter_season_url():
-    for start_year in range(2014, 9999):
+    yield f"https://api.github.com/search/repositories?q=topic:{topic}+created:%3C2016-01-01&page=1&per_page=100"
+    for start_year in range(2016, 9999):
         for start_month in [1, 4, 7, 10]:
             if datetime.date(start_year, start_month, 1) > datetime.date.today():
                 raise StopIteration
