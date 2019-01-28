@@ -45,10 +45,25 @@ h4 { text-align:center;}
     border: solid 1px #5d627b;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.22);
     max-width: 520px;
-    height: 500px;
+    min-height: 500px;
 }
 .userbox li {
     margin: 0;
     padding: 0;
+    width: 100%;
+    overflow:hidden;
+
+}
+.language-color {
+  /* display: inline-block; */
+  /* box-sizing: border-box; */
+  padding: 3px;
+  margin: 2px;
+  display: inline-block;
+  /* line-height: 40px; */
+}
+.lang {
+  /* white-space: nowrap; */
+  /* padding: 10px; */
 }
 .userbox img {max-width: 100%;}

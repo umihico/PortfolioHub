@@ -71,7 +71,7 @@
       {% if optional_content %}
       {{ optional_content }}
       {% endif %}
-      {% for filename, tubled_inforows, location_tags in repos %}
+      {% for filename, tubled_inforows, location_tags, lang_ratios in repos %}
       <div class="col-sm-6 col-md-4">
         <div class="userbox">
           <a href="{{ filename }}"><img src="{{ filename }}" alt="{{ filename }}"></a>
@@ -91,6 +91,9 @@
             {% endfor %}
           </li>
           {% endif %}
+          {% for lang,ratio,color,font_color in lang_ratios %}
+          <span class="language-color" style="min-width:{{ ratio }}%; background-color:{{ color }};"><span class="lang" style="color: {{ font_color }};">{{ lang }}</span></span>
+          {% endfor %}
         </div>
       </div>
       {% endfor %}

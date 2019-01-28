@@ -1,5 +1,9 @@
 from flask_frozen import Freezer
 from flask import Flask, render_template, redirect
+from json import load
+with open('colors.json', mode='r') as f:
+    # credit:https://github.com/ozh/github-colors
+    color_dict = load(f)
 import sys
 sys.path.append("..")
 from common import htmls_root_dir, jsons_dir, topic
@@ -31,6 +35,8 @@ mdb_geotags = MicroDB(jsons_dir+'geotag.json', partition_keys=['username', ])
 print('mdb_geotags', len(mdb_geotags))
 mdb_gifs = MicroDB(jsons_dir+'gifs.json', partition_keys=['full_name', ])
 print('mdb_gifs', len(mdb_gifs))
+mdb_skills = MicroDB(jsons_dir+'skills.json', partition_keys=['username', ])
+print('mdb_skills', len(mdb_skills))
 merged_db = []
 for d in mdb_repos.all():
     gif_json = mdb_gifs.get({'full_name': d['full_name']})
@@ -46,6 +52,7 @@ for d in mdb_repos.all():
         print(d, geotag_json)
         raise
     d['homepage_exist'] = bool(d['homepage'])
+    d['skills'] = mdb_skills.get(d, {}).get('skills', list())
     merged_db.append(d)
 
 
@@ -307,33 +314,74 @@ def yield_page_data(path, headline_menu, repos):
     chunked_repos_list = chunks(repos, 12)
     max_page_num = len(chunked_repos_list)
     for page_index, chunked_repos in enumerate(chunked_repos_list):
-        chunked_repos = [to_tubled_inforow(
+        chunked_repos = [repo_to_htmlinfo(
             repo) for repo in chunked_repos]
         yield path, page_index + 1, headline_menu, chunked_repos, max_page_num, 30
 
 
-def to_tubled_inforow(repo):
-    """for string,url,do_herf in tubled_inforow"""
-    if 'homepage' not in repo:
-        print(repo)
-        raise
-    tubled_inforow = []
+def gen_fontcolor(color):  # "#5d627b"
+    origin_font_color = "#5d627b"
+    if not color:
+        return origin_font_color
+    rgb = [int(x, 16) for x in re.split('(..)', color[1:])[1::2]]
+    if sum(rgb) > 400:
+        return origin_font_color
+    else:
+        origin_font_rgb = [int(x, 16) for x in re.split('(..)', origin_font_color[1:])[1::2]]
+        font_color = "#"+"".join([hex(min([x+100, 255]))[2:] for x in origin_font_rgb])
+        return font_color
+
+
+def skills_to_htmlinfo(skills):
+    lang_ratios = []
+    current_lang_row = []
+    for lang, ratio in skills:
+        color = color_dict.get(lang, {}).get('color', "#EEEEEE")
+        lang = lang+f"({ratio})"
+        font_color = gen_fontcolor(color)
+        lang_ratios.append([lang, ratio, color, font_color])
+        continue
+    return lang_ratios
+    #     if len(current_lang_row) == 6 or (len(current_lang_row) > 0 and current_lang_row[1]+ratio > 50):
+    #         lang_ratios.append(current_lang_row)
+    #         current_lang_row = list()
+    #     current_lang_row.extend([lang, ratio, color])
+    # if current_lang_row:
+    #     lang_ratios.append(current_lang_row)
+    # lang_ratios = [row if len(row) == 6 else [*row, None, None, None] for row in lang_ratios]
+    #
+    # return lang_ratios
+
+
+def test_skills_to_htmlinfo():
+    skills_list = [d['skills'] for d in mdb_skills.all()]
+    for skills in skills_list:
+        lang_ratios = skills_to_htmlinfo(skills)
+
+#
+# test_skills_to_htmlinfo()
+# raise
+
+
+def repo_to_htmlinfo(repo):
+    core_info = []
     username = repo['username']
-    tubled_inforow.append(
+    core_info.append(
         ('name:' + username, "", False))
-    tubled_inforow.append(
+    core_info.append(
         ('repo:' + repo['reponame'], repo['html_url'], True))
-    tubled_inforow.append(('portfolio website', repo['homepage'], True))
-    tubled_inforow.append(
+    core_info.append(('portfolio website', repo['homepage'], True))
+    core_info.append(
         (f"{repo['stargazers_count']} stars", repo['html_url'] + '/stargazers', True))
-    tubled_inforow.append(
+    core_info.append(
         (f"{repo['forks']} forks", repo['html_url'] + '/network/members', True))
-    tubled_inforow.append(
+    core_info.append(
         ("updated:" + str(repo['pushed_at'])[:10], '', False))
     gif_filename = repo['gif_path']
     location_tags = repo['geotags']
-    td = [gif_filename, tubled_inforow, location_tags]
-    return td
+    lang_ratios = skills_to_htmlinfo(repo['skills'])
+    htmlinfo = [gif_filename, core_info, location_tags, lang_ratios]
+    return htmlinfo
 
 
 def iter_headline():
