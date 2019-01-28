@@ -71,4 +71,4 @@ def attach_all_skills(upto=100):
 
 if __name__ == '__main__':
     # test_username_to_skills()
-    attach_all_skills(4000)
+    attach_all_skills(100)
