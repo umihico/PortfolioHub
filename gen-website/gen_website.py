@@ -319,27 +319,45 @@ def yield_page_data(path, headline_menu, repos):
         yield path, page_index + 1, headline_menu, chunked_repos, max_page_num, 30
 
 
-def gen_fontcolor(color):  # "#5d627b"
-    origin_font_color = "#5d627b"
-    if not color:
-        return origin_font_color
-    rgb = [int(x, 16) for x in re.split('(..)', color[1:])[1::2]]
-    if sum(rgb) > 400:
-        return origin_font_color
+def gen_fontcolor(lang_csshex):  # "#5d627b"
+    black_font_csshex = "#5d627b"
+    if not lang_csshex:
+        return black_font_csshex
+    black_font_rgbdex = [int(x, 16) for x in re.split('(..)', black_font_csshex[1:])[1::2]]
+    white_font_rgbdex = [min([x+100, 255]) for x in black_font_rgbdex]
+    white_font_csshex = "#"+"".join([hex(x)[2:] for x in white_font_rgbdex])
+    """optional_exceptions:"""
+    should_be_black = [
+        "#3be133",  # OCaml
+        "#89e051",  # Shell
+    ]
+    should_be_white = [
+        "#e34c26",  # html
+    ]
+    if lang_csshex in should_be_black:
+        return black_font_csshex
+    if lang_csshex in should_be_white:
+        return white_font_csshex
+    lang_rgbdex = [int(x, 16) for x in re.split('(..)', lang_csshex[1:])[1::2]]
+    abs_diff_black = sum([abs(a-b) for a, b in zip(black_font_rgbdex, lang_rgbdex)])
+    abs_diff_white = sum([abs(a-b) for a, b in zip(white_font_rgbdex, lang_rgbdex)])
+    if abs_diff_white > abs_diff_black:
+        return white_font_csshex
     else:
-        origin_font_rgb = [int(x, 16) for x in re.split('(..)', origin_font_color[1:])[1::2]]
-        font_color = "#"+"".join([hex(min([x+100, 255]))[2:] for x in origin_font_rgb])
-        return font_color
+        return black_font_csshex
 
 
 def skills_to_htmlinfo(skills):
     lang_ratios = []
     current_lang_row = []
     for lang, ratio in skills:
-        color = color_dict.get(lang, {}).get('color', "#EEEEEE")
+        color = color_dict.get(lang, {}).get('color', "#FFFFFF")
+        color = color or "#FFFFFF"
         lang = lang+f"({ratio})"
         font_color = gen_fontcolor(color)
-        lang_ratios.append([lang, ratio, color, font_color])
+        color_rgbdex = [int(x, 16) for x in re.split('(..)', color[1:])[1::2]]
+        border_info = "border: solid 1px #000000;" if sum(color_rgbdex) > 700 else ""
+        lang_ratios.append([lang, ratio, color, font_color, border_info])
         continue
     return lang_ratios
     #     if len(current_lang_row) == 6 or (len(current_lang_row) > 0 and current_lang_row[1]+ratio > 50):
