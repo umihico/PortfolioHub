@@ -1,24 +1,23 @@
 # thumbnailed-portfolio-websites
-> GIF Screenshots of everybody's [#portfolio-websites](https://github.com/topics/portfolio-website) on github
-## [https://umihico.github.io/thumbnailed-portfolio-websites/](https://umihico.github.io/thumbnailed-portfolio-websites/)
+GIF Screenshots of everybody's [#portfolio-websites](https://github.com/topics/portfolio-website) on github  
+**[http://umihi.co/thumbnailed-portfolio-websites/](http://umihi.co/thumbnailed-portfolio-websites/)**  
 
-![toppage.gif](/readme_images/toppage.gif)
+### sister website:
+**[http://umihi.co/thumbnailed-personal-websites/](http://umihi.co/thumbnailed-personal-websites/)**  
+([#personal-websites](https://github.com/topics/personal-website) version)  
 
 ### How to add my portfolio?
-+ put topic #portfolio-websites in your repository.
-+ put portfolio url in description of your as 'website', or your repository name is YOURNAME.github.io
-+ Please wait till next crawling.  
++ Add topic #portfolio-websites or #personal-website in your repository.
++ Add portfolio url in your repository, or your repository name is YOURNAME.github.io
++ Please wait till next crawling.
 
-![how_to_add](/readme_images/how_to_add2.jpg)
-### Didn't I capture your page nicely?
-+ You can upload via pull request organized gif as you wish but within 500kb.
+![readme_img](/readme_img.jpg)
+
+### Skillset calculation formula
+1. exacts 'language' and 'size' from https://api.github.com/users/USERNAME/repos?per_page=100&page=1&sort=pushed  (this means one repository can have only one language)
+2. weighting size by last-pushed day sort index(1-100), so `size=1+(1/index)*size`.
+3. distribute 100 points according to size.
+
 
 ### Where is my gif?
-+ Please check [all information here](https://umihico.github.io/thumbnailed-portfolio-websites/database.html) an search your name. Feel free to create issue when you don't understand why.
-
-### I put places in my profile but I don't have geotag
-+ Due to API limitation, it takes time to crawl all users profile. sorry.
-
-### Contribution
-+ Beautifying layout or any advice and suggestions will be greatly appreciated.
-+ Correcting and telling me how to use language will be also greatly appreciated.
++ Please check [all information here](https://umihico.github.io/thumbnailed-portfolio-websites/database.html) and search your name. Feel free to create issue if you don't find.
