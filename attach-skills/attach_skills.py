@@ -9,6 +9,9 @@ from microdb import MicroDB
 def username_to_skills(username="umihico"):
     url = f'https://api.github.com/users/{username}/repos?per_page=100&page=1&sort=pushed'
     repositories = retryable_authorized_http_requests(url).json()
+    if 'message' in repositories and repositories['message'] == 'Not Found':
+        lang_list = list()
+        return lang_list
     self_repositories = [r for r in repositories if not r['fork']]
     langs_and_sizes = [(r['language'], r['size']) for r in self_repositories]
     weights = [1+1/i for i in range(1, 102)]
@@ -19,6 +22,8 @@ def username_to_skills(username="umihico"):
         if lang:
             lang_sum_dict[lang] = lang_sum_dict.get(lang, 0)+size
     total = sum(lang_sum_dict.values())
+    if total == 0:
+        return []
     for key in lang_sum_dict:
         lang_sum_dict[key] = int((lang_sum_dict[key]*100)/total)
     lang_sum_dict = {lang: size for lang, size in lang_sum_dict.items() if size > 0}
@@ -64,6 +69,7 @@ def sort_by_priotity(mdb_repos, mdb_skills):
 def attach_all_skills(upto=100):
     mdb_repos = MicroDB(jsons_dir+'repos.json', partition_keys=['username', ])
     mdb_skills = MicroDB(jsons_dir+'skills.json', partition_keys=['username', ])
+    upto = max([upto, len(mdb_repos)-len(mdb_skills)])
     sorted_usernames_by_priotity = sort_by_priotity(mdb_repos, mdb_skills)
     for username in tqdm(sorted_usernames_by_priotity[:upto]):
         update(username, mdb_skills)

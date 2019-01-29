@@ -17,6 +17,8 @@ def retryable_authorized_http_requests(url):
             return response
         else:
             print(response.json())
+            if response.json()["message"] == 'Not Found':
+                return response
 
 
 from subprocess import check_output

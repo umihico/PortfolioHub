@@ -110,7 +110,7 @@ def url_to_gif(url, filename):
         return gif_success, error_place
     gif_success = raw_pngs_to_gif(pngs, filename)
     if not gif_success:
-        gif_success = 'raw_pngs_to_gif'
+        error_place = 'raw_pngs_to_gif'
     return gif_success, error_place
 
 
@@ -238,20 +238,24 @@ def _del_invalid_gifs():
             os.remove(gif_path)
 
 
-def replace_filepaths_in_json():
+def del_wrong_data():
     mdb_gifs = MicroDB(jsons_dir+'gifs.json', partition_keys=['full_name', ])
+    del_fullnames = []
     for d in mdb_gifs.all():
-        # if 'filepath' not in d:
-        try:
-            d['filepath'] = d['filepath'].replace(
-                "thumbnailed-portfolio-websites-gh-pages", "thumbnailed-portfolio-websites")
-            mdb_gifs.upsert(d)
-        except Exception as e:
-            pass
+        if isinstance(d['success'], str):
+            del_fullnames.append(d)
+            print(d)
+    print(len(del_fullnames))
+    print(del_fullnames)
+    for del_fullname in del_fullnames:
+        key = mdb_gifs.gen_key(del_fullname)
+        print(key)
+        del mdb_gifs[key]
     mdb_gifs.save()
 
 
 if __name__ == '__main__':
+    # del_wrong_data()
     # replace_filepaths_in_json()
     scrap_repos()
     # url_to_gif("https://shawnblakesley.github.io/",
