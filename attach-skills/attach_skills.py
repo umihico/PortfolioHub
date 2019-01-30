@@ -4,6 +4,7 @@ from tqdm import tqdm
 sys.path.append("..")
 from common import retryable_authorized_http_requests, jsons_dir
 from microdb import MicroDB
+from calc_skillset import calc_skillset
 
 
 def username_to_skills(username="umihico"):
@@ -12,23 +13,7 @@ def username_to_skills(username="umihico"):
     if 'message' in repositories and repositories['message'] == 'Not Found':
         lang_list = list()
         return lang_list
-    self_repositories = [r for r in repositories if not r['fork']]
-    langs_and_sizes = [(r['language'], r['size']) for r in self_repositories]
-    weights = [1+1/i for i in range(1, 102)]
-    langs_and_adjusted_sizes = [(lang, size*wei)
-                                for wei, (lang, size) in zip(weights, langs_and_sizes)]
-    lang_sum_dict = {}
-    for lang, size in langs_and_adjusted_sizes:
-        if lang:
-            lang_sum_dict[lang] = lang_sum_dict.get(lang, 0)+size
-    total = sum(lang_sum_dict.values())
-    if total == 0:
-        return []
-    for key in lang_sum_dict:
-        lang_sum_dict[key] = int((lang_sum_dict[key]*100)/total)
-    lang_sum_dict = {lang: size for lang, size in lang_sum_dict.items() if size > 0}
-    lang_list = list(sorted(lang_sum_dict.items(), key=lambda x: x[1], reverse=True))
-    return lang_list
+    return calc_skillset(repositories)
 
 
 def test_username_to_skills():
@@ -77,4 +62,7 @@ def attach_all_skills(upto=100):
 
 if __name__ == '__main__':
     # test_username_to_skills()
-    attach_all_skills(100)
+    import sys
+    sys.argv
+    upto = int(sys.argv[1]) if len(sys.argv) >= 2 else 100
+    attach_all_skills(upto)
