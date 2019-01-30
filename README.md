@@ -14,9 +14,13 @@ GIF Screenshots of everybody's [#portfolio-websites](https://github.com/topics/p
 ![readme_img](/readme_img.jpg)
 
 ### Skillset calculation formula
-1. exacts 'language' and 'size' from https://api.github.com/users/USERNAME/repos?per_page=100&page=1&sort=pushed  (this means one repository can have only one language)
-2. weighting size by last-pushed day sort index(1-100), so `size=1+(1/index)*size`.
-3. distribute 100 points according to size.
+1. exacts 'language' and 'size' from https://api.github.com/users/USERNAME/repos?per_page=100&page=1&sort=pushed
+2. excludes forked repositories.
+3. put `date_point`(1-100) according to last pushed dates.(oldest is 1)
+4. put `size_point`(1-100) according to sizes.(smallest is 1)
+5. calc each repository point by `date_point * size_point`.
+6. sum repositories points according to the language.
+3. distribute 100 points according to language points.
 
 
 ### Where is my gif?
