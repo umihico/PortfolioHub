@@ -15,6 +15,7 @@ from flask import Markup
 from microdb import MicroDB
 import collections
 import re as re
+from ppickle import dump
 
 
 def chunks(list_, chunk_len):
@@ -54,7 +55,7 @@ for d in mdb_repos.all():
     d['homepage_exist'] = bool(d['homepage'])
     d['skills'] = mdb_skills.get(d, {}).get('skills', list())
     merged_db.append(d)
-
+dump(jsons_dir+'merged.json', merged_db)
 
 app = Flask(__name__)
 
