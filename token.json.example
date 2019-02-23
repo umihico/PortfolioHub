@@ -1,0 +1,5 @@
+{
+  "github_api_token":"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "chromelesss_url":"https://XXXXXXXXXX.execute-api.us-west-2.amazonaws.com/default/chromeless-master",
+  "chromelesss_apikey":"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+}

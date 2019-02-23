@@ -2,8 +2,12 @@ import requests
 from ppickle import load
 import time
 last_http_time = 0
-OAUTH_TOKEN = load("../token.json")["OAUTH_TOKEN"]
-headers = {"Authorization": f"token {OAUTH_TOKEN}", }
+d = load("../token.json")
+github_api_token = d["github_api_token"]
+chromelesss_url = d["chromelesss_url"]
+chromelesss_apikey = d["chromelesss_apikey"]
+
+headers = {"Authorization": f"token {github_api_token}", }
 
 
 def retryable_authorized_http_requests(url):
@@ -26,12 +30,10 @@ current_branch_name = check_output(
     "git symbolic-ref --short HEAD".split(" ")).decode().split('\n')[0]
 
 topic = "portfolio-website"
-if current_branch_name == 'personal-website':
-    topic = 'personal-website'
-
-
 htmls_root_dir = "../../thumbnailed-portfolio-websites/"
-if current_branch_name == 'personal-website':
+
+if current_branch_name == 'personal':
+    topic = 'personal-website'
     htmls_root_dir = "../../thumbnailed-personal-websites/"
 
 jsons_dir = htmls_root_dir+'jsons/'

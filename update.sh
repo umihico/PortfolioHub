@@ -5,9 +5,9 @@ python listup_repos.py
 cd $PARENT_DIR/scrap-repo/
 python scrap_repo.py
 cd $PARENT_DIR/attach-geotag/
-python attach_geotag.py
+python attach_geotag.py 4000
 cd $PARENT_DIR/attach-skills/
-python attach_skills.py
+python attach_skills.py 4000
 cd $PARENT_DIR/gen-website/
 python gen_website.py
 # cd $PARENT_DIR/star-repos/

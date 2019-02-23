@@ -65,4 +65,7 @@ def attach_all_geotag(count=100):
 
 if __name__ == '__main__':
     # test_username_to_location()
-    attach_all_geotag(100)
+    import sys
+    sys.argv
+    upto = int(sys.argv[1]) if len(sys.argv) >= 2 else 100
+    attach_all_geotag(upto)

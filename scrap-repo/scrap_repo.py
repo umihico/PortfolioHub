@@ -3,13 +3,12 @@ from PIL import Image
 from io import BytesIO
 from chromeless import Chromeless
 from selenium.webdriver import Chrome, ChromeOptions
-from awsgateway_credentials import awsgateway_apikey, awsgateway_url
 from microdb import MicroDB
 from tqdm import tqdm
 import time
 import sys
 sys.path.append("..")
-from common import jsons_dir, gifs_dir
+from common import jsons_dir, gifs_dir, chromelesss_url, chromelesss_apikey
 from multiprocessing.pool import ThreadPool
 import os
 
@@ -97,7 +96,7 @@ def url_to_gif(url, filename):
     except Exception as e:
         error_place = 'requests.get'
         return gif_success, error_place
-    chrome = Chromeless(awsgateway_url, awsgateway_apikey, chrome_options=chrome_options)
+    chrome = Chromeless(chromelesss_url, chromelesss_apikey, chrome_options=chrome_options)
     chrome.attach_method(scrolling_capture)
     chrome.attach_method(scroll_each_iter)
     try:
