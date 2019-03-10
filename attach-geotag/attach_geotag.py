@@ -6,11 +6,20 @@ from common import retryable_authorized_http_requests, jsons_dir
 from microdb import MicroDB
 from calc_geotag import calc_geotag
 
+class DeletedUserException(Exception):
+    pass
 
 def username_to_location(username="umihico"):
     url = f'https://api.github.com/users/{username}'
     response = retryable_authorized_http_requests(url)
-    return response.json()['location']
+    json=response.json()
+    if 'location' in json:
+        return response.json()['location']
+    elif 'message' in json and json['message']=="Not Found":
+        raise DeletedUserException()
+    else:
+        raise Exception(f'unknown response:{str(json)}')
+
 
 
 def test_username_to_location():
@@ -18,16 +27,20 @@ def test_username_to_location():
 
 
 def update(username, mdb_geotag):
-    location = username_to_location(username)
-    geotag_json = {
-        "username": username,
-        'last_modified': time.time(),
-        'raw': location,
-        'geotags': calc_geotag(location)
-    }
-    print(username, location, calc_geotag(location))
-    mdb_geotag.upsert(geotag_json)
-    mdb_geotag.save()
+    try:
+        location = username_to_location(username)
+    except DeletedUserException as e:
+        return
+    else:
+        geotag_json = {
+            "username": username,
+            'last_modified': time.time(),
+            'raw': location,
+            'geotags': calc_geotag(location)
+        }
+        print(username, location, calc_geotag(location))
+        mdb_geotag.upsert(geotag_json)
+        mdb_geotag.save()
 
 
 def sort_by_priotity(mdb_repos, mdb_geotag):
