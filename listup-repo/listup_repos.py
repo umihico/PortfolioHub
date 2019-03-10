@@ -19,7 +19,7 @@ def iter_season_url():
     for start_year in range(2016, 9999):
         for start_month in [1, 4, 7, 10]:
             if datetime.date(start_year, start_month, 1) > datetime.date.today():
-                raise StopIteration
+                return
             end_month = start_month+3
             end_year = start_year
             if end_month > 12:
