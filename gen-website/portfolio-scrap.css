@@ -1,0 +1,92 @@
+/* Fluid font settings */
+
+html {
+    font-size: 16px;
+}
+
+@media screen and (min-width: 320px) {
+    html {
+        font-size: calc(16px + 6 * ((100vw - 320px) / 680));
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    html {
+        font-size: 22px;
+    }
+}
+
+/* jumbotron/container*/
+
+.container {
+    max-width: 1600px;
+}
+
+.border {
+    border: 2px solid aqua;
+    height: 24px;
+}
+
+/* form row */
+
+.form-group, .form-control {
+    margin-bottom: 0px;
+    border: 0px; 
+    background-color: #FFF;
+}
+
+
+/* card */
+
+.user-portrait {
+    width: 100%;
+    max-width: 60px;
+    border-radius: 999px;
+}
+
+.card-symbol {
+    width: 12%;
+    max-width: 28px;
+    height: auto;
+}
+
+.card-btn {
+    width: 80%;
+}
+
+.gif-card {
+    border: 0px;
+}
+
+.card-img-top {
+    border-radius: 0;
+}
+
+/* language color bar */
+
+.color-bar {
+    height: 5px;
+    padding: 0;
+    margin: 0;
+}
+
+/*hidden button*/
+
+.body-row {
+    height: 4.2em;
+}
+
+.hidden-btns {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    overflow: hidden;
+    background-color: white;
+    transition: 0.4s ease;
+}
+
+.card-body:hover .hidden-btns {
+    height: 4.2em;
+}
