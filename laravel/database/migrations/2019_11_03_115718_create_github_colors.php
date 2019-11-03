@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFailedJobsTable extends Migration
+class CreateGithubColors extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,10 @@ class CreateFailedJobsTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('failed_jobs');
+        Schema::create('github_colors', function (Blueprint $table) {
+            $table->string("language");
+            $table->string("color")->nullable();
+        });
     }
 
     /**
@@ -23,6 +26,6 @@ class CreateFailedJobsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('failed_jobs');
+        Schema::dropIfExists('github_colors');
     }
 }
