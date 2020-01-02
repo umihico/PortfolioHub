@@ -70,7 +70,13 @@ return [
                 'port' => env('PAPERTRAIL_PORT'),
             ],
         ],
-
+        'stdout' => [
+            'driver'  => 'monolog',
+            'handler' => StreamHandler::class,
+            'with'    => [
+                'stream' => 'php://stdout',
+            ],
+        ],
         'stderr' => [
             'driver' => 'monolog',
             'handler' => StreamHandler::class,
