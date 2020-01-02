@@ -13,7 +13,7 @@ class CreatePortfoliosTable extends Migration
      */
     public function up()
     {
-        Schema::create('portfolios', function (Blueprint $table) {
+        Schema::create('portfoliohub', function (Blueprint $table) {
             $table->bigInteger('id')->primary();
             $table->string('user');
             $table->string('repository');
@@ -40,6 +40,6 @@ class CreatePortfoliosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('portfolios');
+        Schema::dropIfExists('portfoliohub');
     }
 }
