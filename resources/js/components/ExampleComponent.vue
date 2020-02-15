@@ -11,6 +11,8 @@
                 </div>
             </div>
         </div>
+        <v-icon>mdi-database-export</v-icon>
+        <span class="mdi mdi-database-export"></span>
         <v-carousel
                 cycle
                 height="400"
