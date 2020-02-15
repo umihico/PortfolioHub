@@ -15,6 +15,8 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
+$app->useStoragePath($_ENV['APP_STORAGE'] ?? $app->storagePath());
+
 $app->loadEnvironmentFrom('.env.'.((getenv("ENV")) ? getenv("ENV") : "local"));
 
 /*
