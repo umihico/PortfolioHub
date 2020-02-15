@@ -16,9 +16,9 @@
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     </head>
     <body>
-        <div id="app">
+        <v-app id="app">
             <example-component></example-component>
-        </div>
+        </v-app>
         <script src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>
