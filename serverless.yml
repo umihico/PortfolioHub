@@ -1,6 +1,15 @@
 custom:
   profile: umihico # aws account configured in ~/.aws/credentials
-  service: myportfolio # project name
+  service: portfoliohub # project name
+  certificateName: umihi.co # certificated domain in AWS Certificate Manager
+  domainName-prod: portfoliohub.umihi.co # domain name
+  domainName-stg: stg-${self:custom.domainName-prod}
+  customDomain:
+    domainName: ${self:custom.domainName-${opt:stage, self:provider.stage}}
+    basePath: ''
+    stage: ${self:provider.stage}
+    certificateName: ${self:custom.certificateName}
+    createRoute53Record: true
 
 service:
   name: ${self:custom.service}
@@ -17,6 +26,7 @@ provider:
 
 plugins:
   - ./vendor/bref/bref
+  - serverless-domain-manager
 
 functions:
   laravel:
