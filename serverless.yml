@@ -23,6 +23,10 @@ provider:
   environment:
     APP_STORAGE: '/tmp'
     ENV: ${opt:stage, self:provider.stage}
+    BREF_BINARY_RESPONSES: 1
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
 
 plugins:
   - ./vendor/bref/bref
