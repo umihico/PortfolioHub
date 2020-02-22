@@ -8,10 +8,15 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+import '@mdi/font/css/materialdesignicons.css'
+export * from './colors.js';
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css';
+import VueRouter from 'vue-router'
+import cards_content from './components/CardsContent.vue';
+import GithubButton from 'vue-github-button'
 Vue.use(Vuetify);
-
+Vue.use(VueRouter);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -31,8 +36,31 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
-    el: '#app',
-    vuetify: new Vuetify({
-    }),
+
+const routes = [
+    {
+        path: '/',
+        name: 'root',
+        component: cards_content
+    },
+];
+const router = new VueRouter({
+    mode: 'history',
+    routes
 });
+window.axios = require('axios');
+export default new Vuetify({
+    icons: {
+        iconfont: 'mdi',
+    },
+})
+const app = new Vue({
+    router,
+    el: '#app',
+    vuetify: new Vuetify(),
+    components:{
+        cards_content,
+        GithubButton,
+    }
+});
+window.app=app;
