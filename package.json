@@ -26,6 +26,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "serverless-python-requirements": "^5.1.0",
         "vue": "^2.6.11",
         "vue-router": "^3.1.5",
         "vuetify": "^2.2.12"
