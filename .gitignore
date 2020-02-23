@@ -20,3 +20,5 @@ public/mix-manifest.json
 public/js/app.js.LICENSE.txt
 
 .serverless
+
+__pycache__
