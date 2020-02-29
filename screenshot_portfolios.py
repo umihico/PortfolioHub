@@ -69,10 +69,23 @@ def screenshot_portfolios():
 
 
 def select_target(conn):
+    records = get_all_target(conn)
+    urls = list(set([record[0] for record in records]))
+    return urls[0] if len(urls) else None
+
+
+def get_all_target(conn):
     cur = conn.cursor()
     cur.execute("select url from portfolios where url is not null and ( (gif_updated_at<date_sub(curdate(), interval 3 day) and repository_updated_at>gif_updated_at) or gif_updated_at is null) order by datediff(repository_updated_at, ifnull(gif_updated_at,  STR_TO_DATE('1900,1,1','%Y,%m,%d'))) desc limit 100")
-    urls = list(set([record[0] for record in cur.fetchall()]))
-    return urls[0] if len(urls) else None
+    records = cur.fetchall()
+    return records
+
+
+def test_select_target():
+    conn = get_db()
+    recrods = select_target(conn)
+    users = [r[1] for r in recrods]
+    print(users)
 
 
 def screenshot_portfolio(url):

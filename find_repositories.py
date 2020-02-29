@@ -13,8 +13,7 @@ def find_repositories(optional_current_minute=None):
         api_url = gen_url(topic, start_year, start_month,
                           end_year, end_month, page_index)
         result.append(api_url)
-        json = get(api_url).json()
-        update_database(cur, json)
+        url_to_database(cur, api_url)
         skip_next_page = should_skip_next_page(
             json, topic, start_year, start_month, end_year, end_month, page_index)
         if skip_next_page:
@@ -22,6 +21,18 @@ def find_repositories(optional_current_minute=None):
     cur.close()
     conn.close()
     return result
+
+
+def url_to_database(cur, url):
+    json = get(url).json()
+    update_database(cur, json)
+
+
+def test_url_to_database():
+    conn = get_db()
+    cur = conn.cursor()
+    url = "https://api.github.com/search/repositories?q=topic:portfolio-website+created:2020-02-01..2020-02-29&page=1&per_page=100"
+    url_to_database(cur, url)
 
 
 def iter_page(optional_current_minute=None):
@@ -102,4 +113,4 @@ def should_skip_next_page(json, topic, start_year, start_month, end_year, end_mo
 
 
 if __name__ == '__main__':
-    find_repositories()
+    test_url_to_database()
