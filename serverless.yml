@@ -9,7 +9,7 @@ custom:
   customDomain:
     domainName: ${self:custom.domainName-${opt:stage, self:provider.stage}}
     basePath: ''
-    stage: ${self:provider.stage}
+    stage: ${opt:stage, self:provider.stage}
     certificateName: ${self:custom.certificateName}
     createRoute53Record: true
   scheduleEnabled:
