@@ -54,8 +54,9 @@ functions:
       - http: 'ANY /{proxy+}'
   scraping:
     handler: main.main
+    timeout: 60
+    memorySize: 512
     runtime: python3.7
-    timeout: 100
     layers:
       - arn:aws:lambda:ap-northeast-1:243491639660:layer:pyyaml:1
       - arn:aws:lambda:ap-northeast-1:243491639660:layer:requests:2
@@ -63,9 +64,8 @@ functions:
       - arn:aws:lambda:ap-northeast-1:243491639660:layer:mysql-connector-python:1
     events:
       - schedule:
-          rate: rate(1 minute)
+          rate: rate(10 minutes)
           enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
-      # - http: 'ANY /'
 
 package:
   exclude:
