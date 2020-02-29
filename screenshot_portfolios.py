@@ -62,7 +62,8 @@ def screenshot_portfolios():
     conn = get_db()
     url = select_target(conn)
     if url is None:
-        return
+        return None
+    pre_update_database(url, conn)
     result_dict = screenshot_portfolio(url)
     update_database(result_dict, conn)
     return result_dict
@@ -147,9 +148,14 @@ def update_database(result_dict, conn):
         result_dict["filename"] = None
     if "error_detail" not in result_dict:
         result_dict["error_detail"] = None
-    conn.ping(reconnect=True)
     cur = conn.cursor()
     cur.execute('UPDATE portfolios SET gif=%(filename)s, gif_updated_at=NOW(), error_detail=%(error_detail)s WHERE url=%(url)s', result_dict)
+
+
+def pre_update_database(url, conn):
+    cur = conn.cursor()
+    cur.execute(
+        'UPDATE portfolios SET gif=null, gif_updated_at=NOW(), error_detail="start_processing" WHERE url=%(url)s', {"url": url})
 
 
 if __name__ == '__main__':

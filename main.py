@@ -16,5 +16,5 @@ def main(event, context):
     return result
 
 
-if __name__ == '__main__':
+def test_main():
     main(None, None)
