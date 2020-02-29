@@ -14,7 +14,7 @@ class PortfolioController extends Controller
 {
     public function fetch_geotags(Request $request){
         $locations=[];
-        foreach (DB::table('portfolios')->distinct()->select('locations')->whereNotNull('gif')->whereNotNull('locations')->get()->toArray() as $record) {
+        foreach (DB::table('portfolios')->distinct()->select(['id','locations'])->whereNotNull('gif')->whereNotNull('locations')->get()->toArray() as $record) {
             foreach (json_decode($record->locations, true) as $location) {
                 if(strlen($location)==0)continue;
                 if(!array_key_exists($location, $locations))$locations[$location]=0;
