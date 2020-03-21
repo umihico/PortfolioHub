@@ -13,7 +13,7 @@ def find_repositories(optional_current_minute=None):
         api_url = gen_url(topic, start_year, start_month,
                           end_year, end_month, page_index)
         result.append(api_url)
-        url_to_database(cur, api_url)
+        json = url_to_database(cur, api_url)
         skip_next_page = should_skip_next_page(
             json, topic, start_year, start_month, end_year, end_month, page_index)
         if skip_next_page:
@@ -26,6 +26,7 @@ def find_repositories(optional_current_minute=None):
 def url_to_database(cur, url):
     json = get(url).json()
     update_database(cur, json)
+    return json
 
 
 def test_url_to_database():
@@ -113,4 +114,4 @@ def should_skip_next_page(json, topic, start_year, start_month, end_year, end_mo
 
 
 if __name__ == '__main__':
-    test_url_to_database()
+    find_repositories(35)
