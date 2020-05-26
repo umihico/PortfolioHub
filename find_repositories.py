@@ -5,22 +5,49 @@ from functools import reduce
 from datetime import datetime, date
 
 
-def find_repositories(optional_current_minute=None):
+def find_repositories():
     conn = get_db()
     cur = conn.cursor()
-    result = []
-    for topic, start_year, start_month, end_year, end_month, page_index in iter_page(optional_current_minute):
-        api_url = gen_url(topic, start_year, start_month,
-                          end_year, end_month, page_index)
-        result.append(api_url)
-        json = url_to_database(cur, api_url)
-        skip_next_page = should_skip_next_page(
-            json, topic, start_year, start_month, end_year, end_month, page_index)
-        if skip_next_page:
-            break
-    cur.close()
-    conn.close()
+    try:
+        result = []
+        for topic, start_year, start_month, end_year, end_month in get_jobs(cur):
+            for page_index in range(1, 11):
+                url = gen_url(topic, start_year, start_month,
+                              end_year, end_month, page_index)
+                result.append(url)
+                json = url_to_database(cur, url)
+                skip_next_page = should_skip_next_page(
+                    json, topic, start_year, start_month, end_year, end_month, page_index)
+                if skip_next_page:
+                    break
+            cur.execute(
+                f"INSERT INTO job_log (topic, start_year, start_month, end_year, end_month, fetched_at) VALUES ('{topic}', {start_year}, {start_month}, {end_year}, {end_month}, now()) ON DUPLICATE KEY UPDATE fetched_at=now()")
+    except Exception:
+        raise
+    finally:
+        cur.close()
+        conn.close()
     return result
+
+
+def get_jobs(cur):
+    all_args = set(map(tuple, iter_page()))
+    cur.execute("select topic, start_year, start_month, end_year, end_month from job_log where fetched_at > date_sub(curdate(), interval 3 day)")
+    recently_fetched_args = set(map(tuple, cur.fetchall()))
+    job_args = all_args - recently_fetched_args
+    if len(job_args) > 0:
+        return list(job_args)[:10]
+    else:
+        cur.execute(
+            "select topic, start_year, start_month, end_year, end_month from job_log order by fetched_at asc limit 1")
+        oldest_fetched_args = list(cur.fetchall())
+        return oldest_fetched_args
+
+
+def test_get_jobs():
+    conn = get_db()
+    cur = conn.cursor()
+    get_jobs(cur)
 
 
 def url_to_database(cur, url):
@@ -36,13 +63,9 @@ def test_url_to_database():
     url_to_database(cur, url)
 
 
-def iter_page(optional_current_minute=None):
-    def get_current_minute_in_1440():
-        """return int between 0 to 1439"""
-        return int((time.time() % (60 * 60 * 24)) / 60)
-
+def iter_page():
     def iter_page_topic(topic):
-        yield topic, None, None, 2016, 1
+        yield topic, 2008, 1, 2016, 1
         for start_year in range(2016, 9999):
             for start_month, end_month in zip([1, 4, 7, 10], [4, 7, 10, 1]):
                 if date(start_year, start_month, 1) > date.today():
@@ -50,16 +73,8 @@ def iter_page(optional_current_minute=None):
                 end_year = start_year if end_month > start_month else start_year + 1
                 yield topic, start_year, start_month, end_year, end_month
 
-    def _iter_page():
-        for topic in ["portfolio-website", 'personal-website']:
-            yield from iter_page_topic(topic)
-
-    current_minute = get_current_minute_in_1440(
-    ) if optional_current_minute is None else optional_current_minute
-    for i, (topic, start_year, start_month, end_year, end_month) in enumerate(_iter_page()):
-        if i == current_minute:
-            for page_index in range(1, 11):
-                yield topic, start_year, start_month, end_year, end_month, page_index
+    for topic in ["portfolio-website", 'personal-website']:
+        yield from iter_page_topic(topic)
 
 
 def test_iter_page():
@@ -114,4 +129,4 @@ def should_skip_next_page(json, topic, start_year, start_month, end_year, end_mo
 
 
 if __name__ == '__main__':
-    find_repositories(35)
+    find_repositories()
