@@ -32,16 +32,10 @@ def find_repositories():
 
 def get_jobs(cur):
     all_args = set(map(tuple, iter_page()))
-    cur.execute("select topic, start_year, start_month, end_year, end_month from job_log where fetched_at > date_sub(curdate(), interval 3 day)")
+    cur.execute("select topic, start_year, start_month, end_year, end_month from job_log where fetched_at > date_sub(curdate(), interval 24 hour)")
     recently_fetched_args = set(map(tuple, cur.fetchall()))
     job_args = all_args - recently_fetched_args
-    if len(job_args) > 0:
-        return list(job_args)[:10]
-    else:
-        cur.execute(
-            "select topic, start_year, start_month, end_year, end_month from job_log order by fetched_at asc limit 1")
-        oldest_fetched_args = list(cur.fetchall())
-        return oldest_fetched_args
+    return list(job_args)
 
 
 def test_get_jobs():
