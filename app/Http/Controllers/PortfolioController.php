@@ -38,6 +38,7 @@ class PortfolioController extends Controller
         ])->validate();
         $query = DB::table('portfolios')
             ->whereNotNull('gif')
+            ->whereDate('api_fetched_at', '>', Carbon::now()->subDays(3))
             ->orderByDesc($request->get('sort', 'stars'));
         $location = $request->get('location', false);
         if ($location) {
