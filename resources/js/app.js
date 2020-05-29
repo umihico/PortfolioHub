@@ -9,12 +9,14 @@ require('./bootstrap');
 window.Vue = require('vue');
 
 import '@mdi/font/css/materialdesignicons.css'
+
 export * from './colors.js';
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css';
 import VueRouter from 'vue-router'
 import cards_content from './components/CardsContent.vue';
 import GithubButton from 'vue-github-button'
+
 Vue.use(Vuetify);
 Vue.use(VueRouter);
 /**
@@ -58,9 +60,9 @@ const app = new Vue({
     router,
     el: '#app',
     vuetify: new Vuetify(),
-    components:{
+    components: {
         cards_content,
         GithubButton,
     }
 });
-window.app=app;
+window.app = app;

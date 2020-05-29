@@ -1,4 +1,4 @@
-color_dict={
+color_dict = {
     "1C Enterprise": {
         "color": "#814CCC",
         "url": "https://github.com/trending?l=1C-Enterprise"

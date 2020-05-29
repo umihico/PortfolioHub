@@ -16,9 +16,9 @@ Route::get('/', function () {
 });
 
 Route::any('/{any}', function (\Illuminate\Http\Request $request) {
-    if(file_exists(public_path($request->path()))){
+    if (file_exists(public_path($request->path()))) {
         return response()->file(public_path($request->path()));
-    }else{
+    } else {
         return redirect('/');
     }
 })->where('any', '.*');
