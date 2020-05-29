@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (! is_dir(config('view.compiled'))) {
+        if (!is_dir(config('view.compiled'))) {
             mkdir(config('view.compiled'), 0755, true);
         }
     }
