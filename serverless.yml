@@ -12,10 +12,9 @@ custom:
     stage: ${opt:stage, self:provider.stage}
     certificateName: ${self:custom.certificateName}
     createRoute53Record: true
-  scheduleEnabled:
-    prod: true
-    stg: false
-    local: false
+  scheduleInterval:
+    prod: 10
+    stg: 1440
 
 service:
   name: ${self:custom.service}
@@ -63,9 +62,7 @@ functions:
       - arn:aws:lambda:ap-northeast-1:243491639660:layer:selenium:7
       - arn:aws:lambda:ap-northeast-1:243491639660:layer:mysql-connector-python:1
     events:
-      - schedule:
-          rate: rate(10 minutes)
-          enabled: ${self:custom.scheduleEnabled.${opt:stage, self:provider.stage}}
+      - schedule: rate(${self:custom.scheduleInterval.${opt:stage, self:provider.stage}} minutes)
 
 package:
   exclude:
