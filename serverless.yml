@@ -4,6 +4,8 @@ custom:
   certificateName: umihi.co # certificated domain in AWS Certificate Manager
   domainName-prod: portfoliohub.umihi.co # domain name
   domainName-stg: stg-${self:custom.domainName-prod}
+  cloudfrontDomainName-prod: portfoliohub-content.umihi.co
+  cloudfrontDomainName-stg: stg-${self:custom.cloudfrontDomainName-prod}
   pythonRequirements:
     dockerizePip: true
   customDomain:
@@ -68,3 +70,67 @@ package:
   exclude:
     - node_modules/**
     - .git/**
+
+
+resources:
+  Resources:
+
+    ResourceBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: 404.html
+      DeletionPolicy: Retain
+
+    ResourceCloudfront:
+      Type: AWS::CloudFront::Distribution
+      DependsOn:
+      - ResourceBucket
+      Properties:
+        DistributionConfig:
+          Origins:
+          - DomainName: ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}.s3-website-ap-northeast-1.amazonaws.com
+            Id: S3Origin
+            CustomOriginConfig:
+              HTTPPort: '80'
+              HTTPSPort: '443'
+              OriginProtocolPolicy: http-only
+          Enabled: true
+          HttpVersion: 'http2'
+          DefaultRootObject: index.html
+          Aliases:
+          - ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}
+          DefaultCacheBehavior:
+            AllowedMethods:
+            - GET
+            - HEAD
+            Compress: true
+            TargetOriginId: S3Origin
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                Forward: none
+            ViewerProtocolPolicy: redirect-to-https
+          PriceClass: PriceClass_All
+          ViewerCertificate:
+            AcmCertificateArn: ${ssm:usacmarn}
+            SslSupportMethod: sni-only
+
+    ResourceDNSName:
+      Type: AWS::Route53::RecordSetGroup
+      Properties:
+        HostedZoneName: umihi.co.
+        RecordSets:
+        - Name: ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}.
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName:
+              Fn::GetAtt: [ ResourceCloudfront, DomainName ]
+
+  Outputs:
+    ResourceCloudfrontDistributionId:
+      Value:
+        Ref: ResourceCloudfront
