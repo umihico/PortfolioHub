@@ -48,7 +48,7 @@ class PortfolioController extends Controller
         $paginated = $query->paginate(12);
         $array = $paginated->toArray();
         foreach ($array['data'] as $r => $record) {
-            $array['data'][$r]->gif = Storage::disk('s3')->temporaryUrl($record->gif, Carbon::now()->addDays(7));
+            $array['data'][$r]->gif = "https://" . env("S3_AWS_BUCKET") . "/portfoliohub/gifs/" . $record->gif;
         }
         return $array;
     }
