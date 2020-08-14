@@ -34,7 +34,7 @@ provider:
       Action:
         - "s3:getObject"
         - "s3:putObject"
-      Resource: "arn:aws:s3:::portfoliohub/*"
+      Resource: "arn:aws:s3:::*/*"
 
 plugins:
   - ./vendor/bref/bref

@@ -139,8 +139,8 @@ def upload_gif(gif_filename, tmpdir):
     fullpath = tmpdir + '/' + gif_filename
     s3 = boto3.session.Session(profile_name='umihico').resource(
         's3') if os.getenv("ENV", "local") == "local" else boto3.resource('s3')
-    bucket = s3.Bucket('portfoliohub')
-    bucket.upload_file(fullpath, gif_filename)
+    bucket = s3.Bucket(os.getenv("BUCKET_NAME"))
+    bucket.upload_file(fullpath, "portfoliohub/gifs/" + gif_filename)
 
 
 def update_database(result_dict, conn):
