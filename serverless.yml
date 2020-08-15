@@ -53,7 +53,7 @@ functions:
       - http: 'ANY /{proxy+}'
   scraping:
     handler: main.main
-    timeout: 60
+    timeout: 120
     memorySize: 512
     runtime: python3.7
     layers:
