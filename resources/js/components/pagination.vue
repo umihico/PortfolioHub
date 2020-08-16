@@ -1,4 +1,3 @@
-
 <template>
     <transition name="fade">
         <v-pagination
@@ -11,22 +10,23 @@
     </transition>
 </template>
 <script>
+
     export default {
-        name:"pagination",
+        name: "pagination",
         props: ['page'],
         data() {
             return {
                 data_page: this.page,
-                last_page:null,
-                show_pagination:false,
+                last_page: null,
+                show_pagination: false,
             };
         },
         methods: {
-            show(last_page){
-                this.show_pagination=true;
-                this.last_page=last_page;
+            show(last_page) {
+                this.show_pagination = true;
+                this.last_page = last_page;
             },
-            paginate(){
+            paginate() {
                 this.$emit('pageHandler', this.data_page);
             },
         },
