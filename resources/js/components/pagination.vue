@@ -10,10 +10,16 @@
     </transition>
 </template>
 <script>
+    import {
+        VPagination,
+    } from "vuetify/lib";
 
     export default {
         name: "pagination",
         props: ['page'],
+        components: {
+            VPagination,
+        },
         data() {
             return {
                 data_page: this.page,
