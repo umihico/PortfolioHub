@@ -43,7 +43,7 @@
                 </v-col>
                 <v-col cols="8">
                     <a :href="'https://github.com/'+user+'/'+repository" target="_blank" style="color: inherit; text-decoration: none;">
-                    <v-icon>mdi-github-circle</v-icon>
+                    <v-icon>mdi-github</v-icon>
                     {{ repository }}</a>
                 </v-col>
                 <v-col cols="4">
