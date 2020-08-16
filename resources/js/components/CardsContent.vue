@@ -28,6 +28,12 @@
     </div>
 </template>
 <script>
+    import {
+        VAutocomplete,
+        VContainer,
+        VRow,
+        VCol,
+    } from "vuetify/lib";
 
     let load_portfolio = function (app) {
         let query = {page: parseInt(app.page), location: app.location};
@@ -52,6 +58,10 @@
         components: {
             portfolio_card,
             pagination,
+            VContainer,
+            VAutocomplete,
+            VRow,
+            VCol,
         },
         data() {
             return {

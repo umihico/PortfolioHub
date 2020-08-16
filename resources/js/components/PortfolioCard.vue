@@ -62,8 +62,29 @@
 </template>
 
 <script>
+    import {
+        VRow,
+        VCol,
+        VCard,
+        VCardTitle,
+        VCardText,
+        VAvatar,
+        VImg,
+        VIcon,
+    } from "vuetify/lib";
+
     export default {
         name: "portfolio_card",
+        components: {
+            VRow,
+            VCol,
+            VCard,
+            VCardTitle,
+            VCardText,
+            VAvatar,
+            VImg,
+            VIcon,
+        },
         data() {
             return {
                 hovered: false,
