@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@mdi/font": "^5.7.55",
-        "axios": "^0.20",
+        "axios": "^0.21",
         "bootstrap": "^4.5.3",
         "cross-env": "^7.0",
         "deepmerge": "^4.2.2",
