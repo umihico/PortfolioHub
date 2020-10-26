@@ -32,7 +32,7 @@
         "install": "^0.13.0",
         "serverless-python-requirements": "^5.1.0",
         "vue": "^2.6.11",
-        "vue-router": "^3.4.7",
+        "vue-router": "^3.4.8",
         "vuetify": "^2.3.15"
     }
 }
