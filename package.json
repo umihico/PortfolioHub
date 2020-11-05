@@ -17,12 +17,12 @@
         "deepmerge": "^4.2.2",
         "fibers": "^5.0.0",
         "jquery": "^3.5.1",
-        "laravel-mix": "^5.0.7",
+        "laravel-mix": "^5.0.9",
         "laravel-mix-bundle-analyzer": "^1.0.5",
         "lodash": "^4.17.20",
         "popper.js": "^1.12",
         "resolve-url-loader": "^3.1.2",
-        "sass": "^1.28.0",
+        "sass": "^1.29.0",
         "sass-loader": "^10.0.5",
         "serverless-domain-manager": "^5.1.0",
         "vue": "^2.6.12",
@@ -32,7 +32,7 @@
         "install": "^0.13.0",
         "serverless-python-requirements": "^5.1.0",
         "vue": "^2.6.11",
-        "vue-router": "^3.4.8",
+        "vue-router": "^3.4.9",
         "vuetify": "^2.3.16"
     }
 }
