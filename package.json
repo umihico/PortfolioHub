@@ -30,7 +30,7 @@
     },
     "dependencies": {
         "install": "^0.13.0",
-        "serverless-python-requirements": "^5.1.0",
+        "serverless-python-requirements": "^5.1.1",
         "vue": "^2.6.11",
         "vue-router": "^3.5.1",
         "vuetify": "^2.4.9"
