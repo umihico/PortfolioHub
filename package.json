@@ -10,8 +10,8 @@
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
     },
     "devDependencies": {
-        "@mdi/font": "^6.1.95",
-        "axios": "^0.21",
+        "@mdi/font": "^6.2.95",
+        "axios": "^0.22",
         "bootstrap": "^5.1.1",
         "cross-env": "^7.0",
         "deepmerge": "^4.2.2",
@@ -33,6 +33,6 @@
         "serverless-python-requirements": "^5.1.1",
         "vue": "^2.6.11",
         "vue-router": "^3.5.2",
-        "vuetify": "^2.5.8"
+        "vuetify": "^2.5.9"
     }
 }
