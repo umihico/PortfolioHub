@@ -11,19 +11,19 @@
     },
     "devDependencies": {
         "@mdi/font": "^6.4.95",
-        "axios": "^0.23",
+        "axios": "^0.24",
         "bootstrap": "^5.1.3",
         "cross-env": "^7.0",
         "deepmerge": "^4.2.2",
         "fibers": "^5.0.0",
         "jquery": "^3.6.0",
-        "laravel-mix": "^6.0.34",
+        "laravel-mix": "^6.0.37",
         "laravel-mix-bundle-analyzer": "^1.0.5",
         "lodash": "^4.17.21",
         "popper.js": "^1.12",
         "resolve-url-loader": "^4.0.0",
-        "sass": "^1.43.3",
-        "sass-loader": "^12.2.0",
+        "sass": "^1.43.4",
+        "sass-loader": "^12.3.0",
         "serverless-domain-manager": "^5.1.5",
         "vue": "^2.6.14",
         "vue-template-compiler": "^2.6.14"
@@ -32,7 +32,7 @@
         "install": "^0.13.0",
         "serverless-python-requirements": "^5.1.1",
         "vue": "^2.6.11",
-        "vue-router": "^3.5.2",
+        "vue-router": "^3.5.3",
         "vuetify": "^2.5.10"
     }
 }
