@@ -22,8 +22,8 @@
         "lodash": "^4.17.21",
         "popper.js": "^1.12",
         "resolve-url-loader": "^4.0.0",
-        "sass": "^1.44.0",
-        "sass-loader": "^12.3.0",
+        "sass": "^1.45.0",
+        "sass-loader": "^12.4.0",
         "serverless-domain-manager": "^5.2.0",
         "vue": "^2.6.14",
         "vue-template-compiler": "^2.6.14"
