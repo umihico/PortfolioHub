@@ -10,7 +10,7 @@ custom:
     dockerizePip: true
   customDomain:
     domainName: ${self:custom.domainName-${opt:stage, self:provider.stage}}
-    basePath: ''
+    basePath: ""
     stage: ${opt:stage, self:provider.stage}
     certificateName: ${self:custom.certificateName}
     createRoute53Record: true
@@ -30,7 +30,7 @@ provider:
   environment: ${file(./${opt:stage, self:provider.stage}.yml)}
   apiGateway:
     binaryMediaTypes:
-      - '*/*'
+      - "*/*"
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -51,8 +51,8 @@ functions:
     layers:
       - ${bref:layer.php-73-fpm}
     events:
-      - http: 'ANY /'
-      - http: 'ANY /{proxy+}'
+      - http: "ANY /"
+      - http: "ANY /{proxy+}"
   scraping:
     handler: main.main
     timeout: 120
@@ -71,10 +71,8 @@ package:
     - node_modules/**
     - .git/**
 
-
 resources:
   Resources:
-
     ResourceBucket:
       Type: AWS::S3::Bucket
       Properties:
@@ -87,25 +85,25 @@ resources:
     ResourceCloudfront:
       Type: AWS::CloudFront::Distribution
       DependsOn:
-      - ResourceBucket
+        - ResourceBucket
       Properties:
         DistributionConfig:
           Origins:
-          - DomainName: ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}.s3-website-ap-northeast-1.amazonaws.com
-            Id: S3Origin
-            CustomOriginConfig:
-              HTTPPort: '80'
-              HTTPSPort: '443'
-              OriginProtocolPolicy: http-only
+            - DomainName: ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}.s3-website-ap-northeast-1.amazonaws.com
+              Id: S3Origin
+              CustomOriginConfig:
+                HTTPPort: "80"
+                HTTPSPort: "443"
+                OriginProtocolPolicy: http-only
           Enabled: true
-          HttpVersion: 'http2'
+          HttpVersion: "http2"
           DefaultRootObject: index.html
           Aliases:
-          - ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}
+            - ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}
           DefaultCacheBehavior:
             AllowedMethods:
-            - GET
-            - HEAD
+              - GET
+              - HEAD
             Compress: true
             TargetOriginId: S3Origin
             ForwardedValues:
@@ -123,12 +121,12 @@ resources:
       Properties:
         HostedZoneName: umihi.co.
         RecordSets:
-        - Name: ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}.
-          Type: A
-          AliasTarget:
-            HostedZoneId: Z2FDTNDATAQYW2
-            DNSName:
-              Fn::GetAtt: [ ResourceCloudfront, DomainName ]
+          - Name: ${self:custom.cloudfrontDomainName-${opt:stage, self:provider.stage}}.
+            Type: A
+            AliasTarget:
+              HostedZoneId: Z2FDTNDATAQYW2
+              DNSName:
+                Fn::GetAtt: [ResourceCloudfront, DomainName]
 
   Outputs:
     ResourceCloudfrontDistributionId:
