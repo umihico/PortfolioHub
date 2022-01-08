@@ -32,6 +32,7 @@ class PortfolioController extends Controller
     public function fetch_portfolio_ids(Request $request)
     {
         Validator::make($request->all(), [
+            "user" => 'nullable|string',
             "page" => 'nullable|integer',
             "sort" => 'nullable|string|in:stars,forks',
             "filter" => 'nullable|string',
@@ -40,6 +41,9 @@ class PortfolioController extends Controller
             ->whereNotNull('gif')
             ->whereDate('api_fetched_at', '>', Carbon::now()->subDays(3))
             ->orderByDesc($request->get('sort', 'stars'));
+        if ($request->has('user')) {
+            $query = $query->where('user', $request->get('user'));
+        }
         $location = $request->get('location', false);
         if ($location) {
             $location = explode(')', $location)[1];

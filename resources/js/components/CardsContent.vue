@@ -37,6 +37,7 @@
 
     let load_portfolio = function (app) {
         let query = {page: parseInt(app.page), location: app.location};
+        if (app.user) query.user = app.user;
         axios.post(`/api/fetch_portfolio_ids?_=${new Date().getTime()}`, query).then(function (res) {
 
             console.log(res.data);
@@ -69,6 +70,7 @@
                 location: "",
                 value: null,
                 page: 1,
+                user: '',
             };
         },
         watch: {
@@ -100,6 +102,7 @@
             push() {
                 let query = {page: this.page};
                 if (this.location) query.location = this.location;
+                if (this.user) query.user = this.user;
                 this.$router.push({path: "/", query: query});
                 window.history.replaceState({}, '', "/?" + Object.keys(query).map(key => `${key}=${encodeURIComponent(query[key])}`).join('&'));
             }
@@ -107,6 +110,7 @@
         created() {
             this.location = this.$route.query.location;
             this.page = (this.$route.query.page) ? parseInt(this.$route.query.page) : 1;
+            this.user = (this.$route.query.user) ? this.$route.query.user : '';
             load_portfolio(this);
             let app = this;
             axios.get(`/api/fetch_geotags?_=${new Date().getTime()}`).then(function (res) {
