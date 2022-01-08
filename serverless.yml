@@ -1,19 +1,19 @@
 custom:
-  profile: umihico # aws account configured in ~/.aws/credentials
+  profile: portfoliohub # aws account configured in ~/.aws/credentials
   service: portfoliohub # project name
   certificateName: umihi.co # certificated domain in AWS Certificate Manager
-  domainName-prod: portfoliohub.umihi.co # domain name
-  domainName-stg: stg-${self:custom.domainName-prod}
+  # domainName-prod: portfoliohub.umihi.co # domain name
+  # domainName-stg: stg-${self:custom.domainName-prod}
   cloudfrontDomainName-prod: portfoliohub-content.umihi.co
   cloudfrontDomainName-stg: stg-${self:custom.cloudfrontDomainName-prod}
   pythonRequirements:
     dockerizePip: true
-  customDomain:
-    domainName: ${self:custom.domainName-${opt:stage, self:provider.stage}}
-    basePath: ""
-    stage: ${opt:stage, self:provider.stage}
-    certificateName: ${self:custom.certificateName}
-    createRoute53Record: true
+  # customDomain:
+  #   domainName: ${self:custom.domainName-${opt:stage, self:provider.stage}}
+  #   basePath: ""
+  #   stage: ${opt:stage, self:provider.stage}
+  #   certificateName: ${self:custom.certificateName}
+  #   createRoute53Record: true
   scheduleInterval:
     prod: 10
     stg: 1440
@@ -37,22 +37,32 @@ provider:
         - "s3:getObject"
         - "s3:putObject"
       Resource: "arn:aws:s3:::*/*"
+  ecr:
+    images:
+      latest:
+        path: ./
 
 plugins:
   - ./vendor/bref/bref
-  - serverless-domain-manager
+  # - serverless-domain-manager
   - serverless-python-requirements
 
 functions:
-  laravel:
-    handler: public/index.php
-    runtime: provided
+  # laravel:
+  #   handler: public/index.php
+  #   runtime: provided
+  #   timeout: 28
+  #   layers:
+  #     - arn:aws:lambda:ap-northeast-1:209497400698:layer:php-81-fpm:16
+  #   events:
+  #     - http: "ANY /"
+  #     - http: "ANY /{proxy+}"
+  web:
     timeout: 28
-    layers:
-      - ${bref:layer.php-73-fpm}
+    image:
+      name: latest
     events:
-      - http: "ANY /"
-      - http: "ANY /{proxy+}"
+      - httpApi: "*"
   scraping:
     handler: main.main
     timeout: 120
@@ -69,6 +79,7 @@ functions:
 package:
   exclude:
     - node_modules/**
+    - terraform/**
     - .git/**
 
 resources:
