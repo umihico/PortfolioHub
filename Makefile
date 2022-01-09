@@ -1,13 +1,13 @@
 stg:
-	php artisan config:clear
-	npm run prod
+	docker-compose run --rm laravel.test php artisan config:clear
+	docker run -v $(PWD):/app -w /app node:15 npm run prod
 	gzip -k --best -f public/js/app.js
 	aws s3 cp public/js/app.js.gz s3://stg-storage.umihi.co/portfoliohub/asset/js/app.js --content-encoding "gzip" --content-type "text/javascript"
 	aws s3 cp public/css/app.css s3://stg-storage.umihi.co/portfoliohub/asset/css/
 	sls deploy --force
 prod:
-	php artisan config:clear
-	npm run prod
+	docker-compose run --rm laravel.test php artisan config:clear
+	docker run -v $(PWD):/app -w /app node:15 npm run prod
 	gzip -k --best -f public/js/app.js
 	aws s3 cp public/js/app.js.gz s3://storage.umihi.co/portfoliohub/asset/js/app.js --content-encoding "gzip" --content-type "text/javascript"
 	aws s3 cp public/css/app.css s3://storage.umihi.co/portfoliohub/asset/css/

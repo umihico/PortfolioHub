@@ -18,7 +18,6 @@ import Vuetify, {
 } from 'vuetify/lib';
 import VueRouter from 'vue-router'
 import cards_content from './components/CardsContent.vue';
-import GithubButton from 'vue-github-button'
 
 Vue.use(Vuetify);
 Vue.use(VueRouter);
@@ -65,7 +64,6 @@ const app = new Vue({
     vuetify: new Vuetify(),
     components: {
         cards_content,
-        GithubButton,
         VApp,
         VContent,
         VContainer,
