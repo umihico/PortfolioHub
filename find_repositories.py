@@ -50,6 +50,22 @@ def url_to_database(cur, url):
     return json
 
 
+def test_update_database(username):
+    conn = get_db()
+    cur = conn.cursor()
+    import percache
+    cache = percache.Cache('/tmp/percache')
+
+    @cache
+    def search(url):
+        print("no cache")
+        return get(url).json()
+    json = search(
+        f"https://api.github.com/search/repositories?q=topic:portfolio-website+user:{username}")
+    print(json)
+    update_database(cur, json)
+
+
 def test_url_to_database():
     conn = get_db()
     cur = conn.cursor()
@@ -124,3 +140,5 @@ def should_skip_next_page(json, topic, start_year, start_month, end_year, end_mo
 
 if __name__ == '__main__':
     find_repositories()
+    # import sys
+    # test_update_database(sys.argv[1])
