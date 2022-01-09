@@ -4,7 +4,7 @@ custom:
   pythonRequirements:
     dockerizePip: true
   scheduleInterval:
-    prod: 10
+    prod: 5
     stg: 1440
 
 service:
