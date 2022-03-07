@@ -22,7 +22,7 @@
         "lodash": "^4.17.21",
         "popper.js": "^1.12",
         "resolve-url-loader": "^5.0.0",
-        "sass": "^1.49.8",
+        "sass": "^1.49.9",
         "sass-loader": "^12.6.0",
         "serverless-domain-manager": "^6.0.2",
         "vue": "^3.2.31",
@@ -32,7 +32,7 @@
         "install": "^0.13.0",
         "serverless-python-requirements": "^5.3.1",
         "vue": "^2.6.11",
-        "vue-router": "^4.0.12",
-        "vuetify": "^2.6.3"
+        "vue-router": "^4.0.13",
+        "vuetify": "^2.6.4"
     }
 }
