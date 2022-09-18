@@ -33,6 +33,6 @@
         "serverless-python-requirements": "^5.4.0",
         "vue": "^2.6.11",
         "vue-router": "^4.1.5",
-        "vuetify": "^2.6.9"
+        "vuetify": "^2.6.10"
     }
 }
