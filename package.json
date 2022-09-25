@@ -22,7 +22,7 @@
         "lodash": "^4.17.21",
         "popper.js": "^1.12",
         "resolve-url-loader": "^5.0.0",
-        "sass": "^1.54.9",
+        "sass": "^1.55.0",
         "sass-loader": "^13.0.2",
         "serverless-domain-manager": "^6.1.0",
         "vue": "^3.2.39",
