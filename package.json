@@ -25,7 +25,7 @@
         "sass": "^1.55.0",
         "sass-loader": "^13.0.2",
         "serverless-domain-manager": "^6.1.0",
-        "vue": "^3.2.39",
+        "vue": "^3.2.40",
         "vue-template-compiler": "^2.7.10"
     },
     "dependencies": {
