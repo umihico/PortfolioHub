@@ -11,8 +11,8 @@
     },
     "devDependencies": {
         "@mdi/font": "^7.0.96",
-        "axios": "^0.27",
-        "bootstrap": "^5.2.1",
+        "axios": "^1.1",
+        "bootstrap": "^5.2.2",
         "cross-env": "^7.0",
         "deepmerge": "^4.2.2",
         "fibers": "^5.0.3",
@@ -23,7 +23,7 @@
         "popper.js": "^1.12",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.55.0",
-        "sass-loader": "^13.0.2",
+        "sass-loader": "^13.1.0",
         "serverless-domain-manager": "^6.1.0",
         "vue": "^3.2.40",
         "vue-template-compiler": "^2.7.10"
@@ -33,6 +33,6 @@
         "serverless-python-requirements": "^5.4.0",
         "vue": "^2.6.11",
         "vue-router": "^4.1.5",
-        "vuetify": "^2.6.10"
+        "vuetify": "^2.6.11"
     }
 }
